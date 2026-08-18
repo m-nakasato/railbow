@@ -3,7 +3,7 @@
 
 # Node.js
 node_modules/
-dist/
+# dist/
 
 # Environment variables
 .env
