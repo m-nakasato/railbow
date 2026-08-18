@@ -111,46 +111,46 @@ function lch(color) {
 }
 
 const CHR = (
-    '//X/Vf1V/VX+oPgg+CjoKA' + // 0: mario head lt
-    'V/9T/0P/VV+A/6APAAMIAw' + // 1: mario head rt
-    '6ADqAP6A/4D/mv6a+prqmg' + // 2: mario head lb
-    'qq8qrwA/C/+m/6a/pq+mqw' + // 3: mario head rb
-    '6lqqWqpVqkUAVQBVwFXBVQ' + // 4: mario body l
-    '9VXVV9Vf1V/6r/qvqq+qrw' + // 5: mario body r
-    'VVZVVlVWqqpWVVZVVlWqqg' + // 6: block
-    'QAAVVRVVFVUVVRVVFVUVVQ' + // 7: gnd lt
-    'JAFhVmFWYVZiVmapYAJhVg' + // 8: gnd rt
-    'FVUVVaVVClUQqhUCFVZqqQ' + // 9: gnd lb
-    'YVZhVoVWhVYVVhVWFVoqqQ' + // 10: gnd rb
+    'AAEAFQFVFVVVVlVqVqpqqg' + //   0: straight
+    'V/9T/0P/VV+A/6APAAMIAw' + //   1:
+    '6ADqAP6A/4D/mv6a+prqmg' + //   2:
+    'qq8qrwA/C/+m/6a/pq+mqw' + //   3:
+    '6lqqWqpVqkUAVQBVwFXBVQ' + //   4:
+    '9VXVV9Vf1V/6r/qvqq+qrw' + //   5:
+    'VVZVVlVWqqpWVVZVVlWqqg' + //   6:
+    'QAAVVRVVFVUVVRVVFVUVVQ' + //   7:
+    'JAFhVmFWYVZiVmapYAJhVg' + //   8:
+    'FVUVVaVVClUQqhUCFVZqqQ' + //   9:
+    'YVZhVoVWhVYVVhVWFVoqqQ' + //  10:
     ''
 )
     .match(/.{22}/g)
     .map((chr) => readChr(chr));
 
 const PLT = [
-    '271618', // mario
-    '273019', // luigi
-    '27170d', // block
+    '271618', // 0: mario
+    '273019', // 1:
+    '27170d', // 2:
 ].map((p) => p.match(/.{2}/g));
 
 // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
-const SPR = [
-    [0, 0, 120, 128, 0, 0, 0],
-    [1, 0, 128, 128, 0, 0, 0],
-    [2, 0, 120, 136, 0, 0, 0],
-    [3, 0, 128, 136, 0, 0, 0],
-    [4, 0, 120, 144, 0, 0, 0],
-    [4, 0, 128, 144, 1, 0, 0],
-    [5, 0, 120, 152, 0, 0, 0],
-    [5, 0, 128, 152, 1, 0, 0],
-];
+// const SPR = [
+//     [0, 0, 120, 128, 0, 0, 0],
+//     [1, 0, 128, 128, 0, 0, 0],
+//     [2, 0, 120, 136, 0, 0, 0],
+//     [3, 0, 128, 136, 0, 0, 0],
+//     [4, 0, 120, 144, 0, 0, 0],
+//     [4, 0, 128, 144, 1, 0, 0],
+//     [5, 0, 120, 152, 0, 0, 0],
+//     [5, 0, 128, 152, 1, 0, 0],
+// ];
 
 // [0:[ltChrId, rtChrId, lbChrId, rbChrId], 1:pltId]
 const BG_MAP_0 = [...Array(16 * 12)];
 // const BG_MAP_1 = [...Array(16 * 12)];
 
 for (let i = 0; i < 16; i++) {
-    BG_MAP_0[i + 16 * 10] = [[7, 8, 9, 10], 2];
+    BG_MAP_0[i + 16 * 10] = [[0, 0, 0, 0], 0];
     // BG_MAP_1[i + 16 * 10] = [[7, 8, 9, 10], 2];
 }
 
@@ -187,10 +187,10 @@ const buildBG = (BG_MAP) =>
 const BG0 = buildBG(BG_MAP_0);
 // const BG1 = buildBG(BG_MAP_1);
 
-// const SCALE = 3;
-const SCALE = 2;
+const SCALE = 3;
+// const SCALE = 2;
 let bgColor = '12';
-const CANVAS = document.getElementById('s');
+const CANVAS = document.querySelector('#s canvas');
 const canvasRenderingCtx = CANVAS.getContext('2d');
 const CANVAS_WIDTH = 256 * SCALE; //256, 160
 const CANVAS_HEIGHT = 192 * SCALE; //240, 192, 120
@@ -227,7 +227,7 @@ const draw = () => {
     }
     document.getElementById('debug').innerText = `bgX: ${bgX}, bgXVelocity: ${bgXVelocity}`;
 
-    SPR.filter((chr) => chr[6] === 1).forEach(drawChr);
+    // SPR.filter((chr) => chr[6] === 1).forEach(drawChr);
 
     BG0.map((chr) => [chr[0], chr[1], chr[2] - bgX + 256 * (0 + bgSwitch), chr[3]]).forEach(
         drawChr,
@@ -236,7 +236,7 @@ const draw = () => {
     //     drawChr,
     // );
 
-    SPR.filter((chr) => chr[6] === 0).forEach(drawChr);
+    // SPR.filter((chr) => chr[6] === 0).forEach(drawChr);
 
     canvasRenderingCtx.drawImage(offScreenCanvas, 0, 0);
 

@@ -1,14 +1,28 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
+        <title>Railbow</title>
         <script src="b.js" defer></script>
         <style>
+            html,
             body {
+                height: 100%;
                 background: black;
                 color: white;
+            }
+            body {
+                margin: 0;
+                overflow: hidden;
+            }
+            #s {
+                margin: 0 auto;
+                text-align: center;
+            }
+            canvas {
+                _transform-origin: top left;
+                _display: block;
             }
         </style>
     </head>
@@ -16,6 +30,6 @@
         <button id="play">Play</button>
         <button id="stop">Stop</button>
         <div id="debug"></div>
-        <canvas id="s"></canvas>
+        <div id="s"><canvas></canvas></div>
     </body>
 </html>
