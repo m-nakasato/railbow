@@ -431,7 +431,7 @@ const BG_MAP_0 = [...Array(16 * 12)];
 // const BG_MAP_1 = [...Array(16 * 12)];
 
 for (let i = 0; i < 16; i++) {
-    BG_MAP_0[i + 16 * 10] = [[0, 0, 0, 0], 0];
+    BG_MAP_0[i + 0 * 10] = [[0, 0, 0, 0], 0];
     // BG_MAP_1[i + 16 * 10] = [[7, 8, 9, 10], 2];
 }
 
@@ -474,7 +474,7 @@ let bgColor = '12';
 const CANVAS = document.querySelector('#s canvas');
 const canvasRenderingCtx = CANVAS.getContext('2d');
 const CANVAS_WIDTH = 256 * SCALE; //256, 160
-const CANVAS_HEIGHT = 192 * SCALE; //240, 192, 120
+const CANVAS_HEIGHT = 144 * SCALE; //240, 192, 144, 120
 CANVAS.width = CANVAS_WIDTH;
 CANVAS.height = CANVAS_HEIGHT;
 canvasRenderingCtx.scale(SCALE, SCALE);
