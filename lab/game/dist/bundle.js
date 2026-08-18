@@ -558,4 +558,22 @@ document.onkeyup = (e) => {
     //     if (k == 'ArrowUp' || k == 'w') stop('y');
     if (e.key == 'ArrowRight' || e.key == 'd') walkStop();
 };
+
+function adjustContainer() {
+    // let scale;
+    // if (window.innerWidth < window.innerHeight) {
+    //     scale = window.innerWidth / document.querySelector('#scr').width;
+    // } else {
+    //     scale = window.innerHeight / document.querySelector('#scr').height;
+    //     document.querySelector('#ctrl').style.display = 'none';
+    // }
+    // document.querySelector('#scr').style.transform = 'scale(' + scale + ')';
+    // document.querySelector('#scrDiv').style.width = document.querySelector('#scr').width * scale + 'px'
+    document.querySelector('#s').style.width = document.querySelector('canvas').width + 'px';
+    // alert(document.querySelector('#scrDiv').style.width);
+}
+
+window.onload = function () {
+    adjustContainer();
+};
 //# sourceMappingURL=bundle.js.map
