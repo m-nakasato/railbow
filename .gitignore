@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Node.js
+node_modules/
+dist/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Test coverage
+coverage/
+
+# Temporary files
+*.tmp
+*.bak
+
+# Windows
+Thumbs.db

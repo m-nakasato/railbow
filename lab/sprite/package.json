@@ -1,0 +1,14 @@
+{
+    "dependencies": {
+        "@m-nakasato/kobo-audio": "0.0.0"
+    },
+    "scripts": {
+        "_clean": "rm -rf ./dist && mkdir ./dist",
+        "_rollup": "rollup -c $(git rev-parse --show-toplevel)/rollup.config.js",
+        "_html-minifier": "html-minifier-terser ./src/index.html -o ./dist/index.html -c $(git rev-parse --show-toplevel)/html-minifier.config.cjs",
+        "_build": "npm run _clean && npm run _rollup && npm run _html-minifier",
+        "_zip": "zip -j ./dist/b.zip ./dist/b.js ./dist/index.html",
+        "debug": "cross-env NODE_ENV=development npm run _build",
+        "release": "cross-env NODE_ENV=production npm run _build && npm run _zip"
+    }
+}

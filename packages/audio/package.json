@@ -1,0 +1,12 @@
+{
+    "name": "@m-nakasato/kobo-audio",
+    "version": "0.0.0",
+    "type": "module",
+    "description": "KOBO Framework audio module for JavaScript mini-games.",
+    "author": "m-nakasato",
+    "license": "MIT",
+    "exports": {
+        "./synthesizer": "./synthesizer/src/index.mjs",
+        "./sequencer": "./sequencer/src/index.mjs"
+    }
+}
