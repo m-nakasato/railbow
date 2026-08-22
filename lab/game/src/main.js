@@ -193,7 +193,7 @@ let bgColor = '12';
 const CANVAS = document.querySelector('#s canvas');
 const canvasRenderingCtx = CANVAS.getContext('2d');
 const CANVAS_WIDTH = 256 * SCALE; //256, 160
-const CANVAS_HEIGHT = 144 * SCALE; //240, 192, 144, 120
+const CANVAS_HEIGHT = 192 * SCALE; //240, 192, 144, 120
 CANVAS.width = CANVAS_WIDTH;
 CANVAS.height = CANVAS_HEIGHT;
 canvasRenderingCtx.scale(SCALE, SCALE);
