@@ -431,48 +431,10 @@ const PLT = [
 ].map((p) => p.match(/.{2}/g));
 
 // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
-// const SPR = [
-//     [0, 0, 120, 128, 0, 0, 0],
-//     [1, 0, 128, 128, 0, 0, 0],
-//     [2, 0, 120, 136, 0, 0, 0],
-//     [3, 0, 128, 136, 0, 0, 0],
-//     [4, 0, 120, 144, 0, 0, 0],
-//     [4, 0, 128, 144, 1, 0, 0],
-//     [5, 0, 120, 152, 0, 0, 0],
-//     [5, 0, 128, 152, 1, 0, 0],
-// ];
+// const PANEL = [...Array(16)].map(() => JSON.parse(JSON.stringify(PANEL_TEMPLATE)));
+const PANEL = [...Array(16)].map(() => Array());
 
-const PANEL_TEMPLATE = [
-    [3, 0, 8, 0], //          0: cloud t
-    [4, 0, 16, 0], //         1:
-    [5, 0, 24, 0], //         2:
-    [5, 0, 32, 0, 1], //      3:
-    [4, 0, 40, 0, 1], //      4:
-    [3, 0, 48, 0, 1], //      5:
-    [3, 0, 8, 40, 0, 1], //   6: cloud b
-    [4, 0, 16, 40, 0, 1], //  7:
-    [5, 0, 24, 40, 0, 1], //  8:
-    [5, 0, 32, 40, 1, 1], //  9:
-    [4, 0, 40, 40, 1, 1], // 10:
-    [3, 0, 48, 40, 1, 1], // 11:
-    [0, 0, 0, 0], //         12: cloud l
-    [1, 0, 0, 8], //         13:
-    [2, 0, 0, 16], //        14:
-    [2, 0, 0, 24, 0, 1], //  15:
-    [1, 0, 0, 32, 0, 1], //  16:
-    [0, 0, 0, 40, 0, 1], //  17:
-    [0, 0, 56, 0, 1], //     18: cloud r
-    [1, 0, 56, 8, 1], //     19:
-    [2, 0, 56, 16, 1], //    20:
-    [2, 0, 56, 24, 1, 1], // 21:
-    [1, 0, 56, 32, 1, 1], // 22:
-    [0, 0, 56, 40, 1, 1], // 23:
-];
-
-// [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
-const PANEL = [...Array(16)].map(() => JSON.parse(JSON.stringify(PANEL_TEMPLATE)));
-
-for (let i = 1; i < 7; i++) {
+for (let i = 0; i < 8; i++) {
     PANEL[0].push([6, 1, 8 * i, 8]);
     PANEL[0].push([7, 1, 8 * i, 16]);
     PANEL[0].push([7, 2, 8 * i, 24]);
@@ -482,7 +444,7 @@ for (let i = 1; i < 7; i++) {
     PANEL[2].push([7, 1, 8 * i, 24, , 1]);
     PANEL[2].push([6, 1, 8 * i, 32, , 1]);
 }
-for (let i = 1; i < 5; i++) {
+for (let i = 0; i < 6; i++) {
     PANEL[4].push([8, 1, 16, 8 * i]);
     PANEL[4].push([9, 1, 24, 8 * i]);
     PANEL[4].push([9, 2, 32, 8 * i]);
@@ -498,6 +460,10 @@ PANEL[3] = JSON.parse(JSON.stringify(PANEL[2]));
 PANEL[5] = JSON.parse(JSON.stringify(PANEL[4]));
 PANEL[7] = JSON.parse(JSON.stringify(PANEL[6]));
 
+PANEL[8].push([6, 5, 56, 8]);
+PANEL[8].push([7, 5, 56, 16, , 1]);
+PANEL[8].push([7, 6, 56, 24, , 1]);
+PANEL[8].push([6, 6, 56, 32, , 1]);
 PANEL[8].push([6, 5, 48, 8]);
 PANEL[8].push([7, 5, 48, 16, , 1]);
 PANEL[8].push([7, 6, 48, 24, , 1]);
@@ -515,7 +481,19 @@ PANEL[8].push([19, 6, 40, 32, 1]);
 PANEL[8].push([20, 7, 32, 32, 1]);
 PANEL[8].push([21, 5, 24, 32, 1]);
 PANEL[8].push([22, 5, 16, 32, 1]);
+PANEL[8].push([8, 1, 16, 40]);
+PANEL[8].push([9, 1, 24, 40]);
+PANEL[8].push([9, 2, 32, 40]);
+PANEL[8].push([8, 2, 40, 40, 1]);
 
+PANEL[12].push([8, 1, 16, 0]);
+PANEL[12].push([9, 1, 24, 0]);
+PANEL[12].push([9, 2, 32, 0]);
+PANEL[12].push([8, 2, 40, 0, 1]);
+PANEL[12].push([6, 2, 56, 8]);
+PANEL[12].push([7, 2, 56, 16, , 1]);
+PANEL[12].push([7, 1, 56, 24, , 1]);
+PANEL[12].push([6, 1, 56, 32, , 1]);
 PANEL[12].push([6, 2, 48, 8]);
 PANEL[12].push([7, 2, 48, 16, , 1]);
 PANEL[12].push([7, 1, 48, 24, , 1]);
@@ -534,6 +512,10 @@ PANEL[12].push([20, 7, 32, 8, 1, 1]);
 PANEL[12].push([21, 5, 24, 8, 1, 1]);
 PANEL[12].push([22, 5, 16, 8, 1, 1]);
 
+PANEL[9].push([6, 5, 0, 8]);
+PANEL[9].push([7, 5, 0, 16, , 1]);
+PANEL[9].push([7, 6, 0, 24, , 1]);
+PANEL[9].push([6, 6, 0, 32, , 1]);
 PANEL[9].push([6, 5, 8, 8]);
 PANEL[9].push([7, 5, 8, 16, , 1]);
 PANEL[9].push([7, 6, 8, 24, , 1]);
@@ -551,7 +533,15 @@ PANEL[9].push([19, 6, 16, 32]);
 PANEL[9].push([20, 7, 24, 32]);
 PANEL[9].push([21, 5, 32, 32]);
 PANEL[9].push([22, 5, 40, 32]);
+PANEL[9].push([8, 2, 16, 40]);
+PANEL[9].push([9, 2, 24, 40, 1]);
+PANEL[9].push([9, 1, 32, 40, 1]);
+PANEL[9].push([8, 1, 40, 40, 1]);
 
+PANEL[13].push([6, 2, 0, 8]);
+PANEL[13].push([7, 2, 0, 16, , 1]);
+PANEL[13].push([7, 1, 0, 24, , 1]);
+PANEL[13].push([6, 1, 0, 32, , 1]);
 PANEL[13].push([6, 2, 8, 8]);
 PANEL[13].push([7, 2, 8, 16, , 1]);
 PANEL[13].push([7, 1, 8, 24, , 1]);
@@ -569,7 +559,15 @@ PANEL[13].push([19, 6, 16, 8, , 1]);
 PANEL[13].push([20, 7, 24, 8, , 1]);
 PANEL[13].push([21, 5, 32, 8, , 1]);
 PANEL[13].push([22, 5, 40, 8, , 1]);
+PANEL[13].push([8, 2, 16, 0]);
+PANEL[13].push([9, 2, 24, 0, 1]);
+PANEL[13].push([9, 1, 32, 0, 1]);
+PANEL[13].push([8, 1, 40, 0, 1]);
 
+PANEL[10].push([6, 2, 56, 8]);
+PANEL[10].push([7, 2, 56, 16, , 1]);
+PANEL[10].push([7, 1, 56, 24, , 1]);
+PANEL[10].push([6, 1, 56, 32, , 1]);
 PANEL[10].push([6, 2, 48, 8]);
 PANEL[10].push([7, 2, 48, 16, , 1]);
 PANEL[10].push([7, 1, 48, 24, , 1]);
@@ -587,7 +585,15 @@ PANEL[10].push([19, 1, 40, 32, 1]);
 PANEL[10].push([20, 3, 32, 32, 1]);
 PANEL[10].push([21, 2, 24, 32, 1]);
 PANEL[10].push([22, 2, 16, 32, 1]);
+PANEL[10].push([8, 2, 16, 40]);
+PANEL[10].push([9, 2, 24, 40, 1]);
+PANEL[10].push([9, 1, 32, 40, 1]);
+PANEL[10].push([8, 1, 40, 40, 1]);
 
+PANEL[14].push([6, 5, 56, 8]);
+PANEL[14].push([7, 5, 56, 16, , 1]);
+PANEL[14].push([7, 6, 56, 24, , 1]);
+PANEL[14].push([6, 6, 56, 32, , 1]);
 PANEL[14].push([6, 5, 48, 8]);
 PANEL[14].push([7, 5, 48, 16, , 1]);
 PANEL[14].push([7, 6, 48, 24, , 1]);
@@ -605,7 +611,15 @@ PANEL[14].push([19, 1, 40, 8, 1, 1]);
 PANEL[14].push([20, 3, 32, 8, 1, 1]);
 PANEL[14].push([21, 2, 24, 8, 1, 1]);
 PANEL[14].push([22, 2, 16, 8, 1, 1]);
+PANEL[14].push([8, 2, 16, 0]);
+PANEL[14].push([9, 2, 24, 0, 1]);
+PANEL[14].push([9, 1, 32, 0, 1]);
+PANEL[14].push([8, 1, 40, 0, 1]);
 
+PANEL[11].push([6, 2, 0, 8]);
+PANEL[11].push([7, 2, 0, 16, , 1]);
+PANEL[11].push([7, 1, 0, 24, , 1]);
+PANEL[11].push([6, 1, 0, 32, , 1]);
 PANEL[11].push([6, 2, 8, 8]);
 PANEL[11].push([7, 2, 8, 16, , 1]);
 PANEL[11].push([7, 1, 8, 24, , 1]);
@@ -623,7 +637,15 @@ PANEL[11].push([19, 1, 16, 32]);
 PANEL[11].push([20, 3, 24, 32]);
 PANEL[11].push([21, 2, 32, 32]);
 PANEL[11].push([22, 2, 40, 32]);
+PANEL[11].push([8, 1, 16, 40]);
+PANEL[11].push([9, 1, 24, 40]);
+PANEL[11].push([9, 2, 32, 40]);
+PANEL[11].push([8, 2, 40, 40, 1]);
 
+PANEL[15].push([6, 5, 0, 8]);
+PANEL[15].push([7, 5, 0, 16, , 1]);
+PANEL[15].push([7, 6, 0, 24, , 1]);
+PANEL[15].push([6, 6, 0, 32, , 1]);
 PANEL[15].push([6, 5, 8, 8]);
 PANEL[15].push([7, 5, 8, 16, , 1]);
 PANEL[15].push([7, 6, 8, 24, , 1]);
@@ -641,6 +663,80 @@ PANEL[15].push([19, 1, 16, 8, , 1]);
 PANEL[15].push([20, 3, 24, 8, , 1]);
 PANEL[15].push([21, 2, 32, 8, , 1]);
 PANEL[15].push([22, 2, 40, 8, , 1]);
+PANEL[15].push([8, 1, 16, 0]);
+PANEL[15].push([9, 1, 24, 0]);
+PANEL[15].push([9, 2, 32, 0]);
+PANEL[15].push([8, 2, 40, 0, 1]);
+
+// [top, right, bottom, left]
+const PANEL_TERMINAL = [
+    [, 1, , 1],
+    [, 1, , 1],
+    [, 0, , 0],
+    [, 0, , 0],
+    [1, , 1],
+    [1, , 1],
+    [0, , 0],
+    [0, , 0],
+    [, 1, 1],
+    [, , 0, 1],
+    [, 0, 0],
+    [, , 1, 0],
+    [1, 0],
+    [0, , , 0],
+    [0, 1],
+    [1, , , 1],
+];
+
+PANEL_TERMINAL.forEach((p, pid) => {
+    let column = pid % 4,
+        row = pid >> 2;
+    console.log(pid, column, row);
+    if (column == 0) {
+        console.log('l', pid);
+        [
+            [0, 0, 0, 0], //         12: cloud l
+            [1, 0, 0, 8], //         13:
+            [2, 0, 0, 16], //        14:
+            [2, 0, 0, 24, 0, 1], //  15:
+            [1, 0, 0, 32, 0, 1], //  16:
+            [0, 0, 0, 40, 0, 1], //  17:
+        ].forEach((c) => PANEL[pid].push(JSON.parse(JSON.stringify(c))));
+    }
+    if (column == 3) {
+        console.log('r', pid);
+        [
+            [0, 0, 56, 0, 1], //     18: cloud r
+            [1, 0, 56, 8, 1], //     19:
+            [2, 0, 56, 16, 1], //    20:
+            [2, 0, 56, 24, 1, 1], // 21:
+            [1, 0, 56, 32, 1, 1], // 22:
+            [0, 0, 56, 40, 1, 1], // 23:
+        ].forEach((c) => PANEL[pid].push(JSON.parse(JSON.stringify(c))));
+    }
+    if (row == 0) {
+        console.log('t', pid);
+        [
+            [3, 0, 8, 0], //          0: cloud t
+            [4, 0, 16, 0], //         1:
+            [5, 0, 24, 0], //         2:
+            [5, 0, 32, 0, 1], //      3:
+            [4, 0, 40, 0, 1], //      4:
+            [3, 0, 48, 0, 1], //      5:
+        ].forEach((c) => PANEL[pid].push(JSON.parse(JSON.stringify(c))));
+    }
+    if (row == 3) {
+        console.log('b', pid);
+        [
+            [3, 0, 8, 40, 0, 1], //   6: cloud b
+            [4, 0, 16, 40, 0, 1], //  7:
+            [5, 0, 24, 40, 0, 1], //  8:
+            [5, 0, 32, 40, 1, 1], //  9:
+            [4, 0, 40, 40, 1, 1], // 10:
+            [3, 0, 48, 40, 1, 1], // 11:
+        ].forEach((c) => PANEL[pid].push(JSON.parse(JSON.stringify(c))));
+    }
+});
 
 console.log(PANEL);
 
