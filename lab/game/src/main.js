@@ -96,14 +96,12 @@ function lch(color) {
     if (hue == 0) {
         l = lightness * 30 + 40;
     } else if (hue < 13) {
-        // h = hue * 30 + 200;
-        // h = hue * 28 + 225;
-        // h = hue * 28 + 230;
-        h = hue * 28 + 235; //
+        h = (7 + hue) * 30;
+        // c = 50;
         c = 55;
         // c = 65;
-        //l = lightness * 25 + 25;
-        l = lightness * 26 + 35;
+        // l = 35 + lightness * 26;
+        l = 30 + lightness * 30;
     } else {
         l = (lightness - 2) * 30 + 30;
     }
@@ -111,26 +109,44 @@ function lch(color) {
 }
 
 const CHR = (
-    'AAEAFQFVFVVVVlVqVqpqqg' + //   0: straight
-    'V/9T/0P/VV+A/6APAAMIAw' + //   1:
-    '6ADqAP6A/4D/mv6a+prqmg' + //   2:
-    'qq8qrwA/C/+m/6a/pq+mqw' + //   3:
-    '6lqqWqpVqkUAVQBVwFXBVQ' + //   4:
-    '9VXVV9Vf1V/6r/qvqq+qrw' + //   5:
-    'VVZVVlVWqqpWVVZVVlWqqg' + //   6:
-    'QAAVVRVVFVUVVRVVFVUVVQ' + //   7:
-    'JAFhVmFWYVZiVmapYAJhVg' + //   8:
-    'FVUVVaVVClUQqhUCFVZqqQ' + //   9:
-    'YVZhVoVWhVYVVhVWFVoqqQ' + //  10:
+    '/////////////1f/qf+qfw' + //   0: cloud v1
+    'qn+qX6qnqqeqqaqpqqmqqQ' + //   1: cloud v2
+    'qpmqpaqlqqmqqaqpqqmqqQ' + //   2: cloud v3
+    '/9r/2v/a//b//f///////w' + //   3: cloud h1
+    'qqqqqqqqqqpaqtqq9ar/VQ' + //   4: cloud h2
+    'qqqqqqqqqqqqqmqqlqpVVQ' + //   5: cloud h3
+    '//////////+qqqqqqqqqqg' + //   6: rainbow h half
+    'AAAAAAAAAABVVVVVVVVVVQ' + //   7: rainbow h full
+    '/6r/qv+q/6r/qv+q/6r/qg' + //   8: rainbow v half
+    'AFUAVQBVAFUAVQBVAFUAVQ' + //   9: rainbow v full
+    '//////////+qq6qqqqqqqg' + //  10: rainbow c 1-1
+    '/////////////6//qv+qrw' + //  11: rainbow c 2-1
+    'VVpVVVVVVVUAFQAAAAAAAA' + //  12: rainbow c 1-2
+    'qqpqqlaqVWpVVlVVBVUAVQ' + //  13: rainbow c 2-2
+    '//+//6//q/+q/6q/aq9aqw' + //  14: rainbow c 3-2
+    'VWpVVlVVVVUAVQAFAAEAAA' + //  15: rainbow c 1-3
+    'VWpVWhVWBVUBVQBVABUABQ' + //  16: rainbow c 2-3
+    'VqpVqlWqVWoVahVaBVoFVg' + //  17: rainbow c 3-3
+    '/////7//v/+v/6//q/+r/w' + //  18: rainbow c 4-3
+    'qACqgKqgqqj6qP6q/6r/qg' + //  19: rainbow c 1-4
+    'FVoFVgFWAVUAVQBVAFUAVQ' + //  20: rainbow c 2-4
+    'AVYBVgFVAFUAVQBVAFUAVQ' + //  21: rainbow c 3-4
+    'q/+q/6r/qv+q/6r/qv+q/w' + //  22: rainbow c 4-4
     ''
 )
     .match(/.{22}/g)
     .map((chr) => readChr(chr));
 
 const PLT = [
-    '271618', // 0: mario
-    '273019', // 1:
-    '27170d', // 2:
+    '321030', // 0: cloud
+    '262824', // 1: red yellow purple
+    '2a2c22', // 2: green blue violet
+    '26282a', // 3: red yellow green
+    '282a2c', // 4: yellow green blue
+    '282624', // 5: yellow red purple
+    '2c2a22', // 6: blue green violet
+    '2c2a28', // 7: blue green yellow
+    '2a2826', // 8: green yellow red
 ].map((p) => p.match(/.{2}/g));
 
 // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
@@ -145,57 +161,230 @@ const PLT = [
 //     [5, 0, 128, 152, 1, 0, 0],
 // ];
 
-// [0:[ltChrId, rtChrId, lbChrId, rbChrId], 1:pltId]
-const BG_MAP_0 = [...Array(16 * 12)];
-// const BG_MAP_1 = [...Array(16 * 12)];
+const PANEL_TEMPLATE = [
+    [3, 0, 8, 0], //          0: cloud t
+    [4, 0, 16, 0], //         1:
+    [5, 0, 24, 0], //         2:
+    [5, 0, 32, 0, 1], //      3:
+    [4, 0, 40, 0, 1], //      4:
+    [3, 0, 48, 0, 1], //      5:
+    [3, 0, 8, 40, 0, 1], //   6: cloud b
+    [4, 0, 16, 40, 0, 1], //  7:
+    [5, 0, 24, 40, 0, 1], //  8:
+    [5, 0, 32, 40, 1, 1], //  9:
+    [4, 0, 40, 40, 1, 1], // 10:
+    [3, 0, 48, 40, 1, 1], // 11:
+    [0, 0, 0, 0], //         12: cloud l
+    [1, 0, 0, 8], //         13:
+    [2, 0, 0, 16], //        14:
+    [2, 0, 0, 24, 0, 1], //  15:
+    [1, 0, 0, 32, 0, 1], //  16:
+    [0, 0, 0, 40, 0, 1], //  17:
+    [0, 0, 56, 0, 1], //     18: cloud r
+    [1, 0, 56, 8, 1], //     19:
+    [2, 0, 56, 16, 1], //    20:
+    [2, 0, 56, 24, 1, 1], // 21:
+    [1, 0, 56, 32, 1, 1], // 22:
+    [0, 0, 56, 40, 1, 1], // 23:
+];
 
-for (let i = 0; i < 16; i++) {
-    BG_MAP_0[i + 0 * 10] = [[0, 0, 0, 0], 0];
-    // BG_MAP_1[i + 16 * 10] = [[7, 8, 9, 10], 2];
+// [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
+const PANEL = [...Array(16)].map(() => JSON.parse(JSON.stringify(PANEL_TEMPLATE)));
+
+for (let i = 1; i < 7; i++) {
+    PANEL[0].push([6, 1, 8 * i, 8]);
+    PANEL[0].push([7, 1, 8 * i, 16]);
+    PANEL[0].push([7, 2, 8 * i, 24]);
+    PANEL[0].push([6, 2, 8 * i, 32, , 1]);
+    PANEL[2].push([6, 2, 8 * i, 8]);
+    PANEL[2].push([7, 2, 8 * i, 16, , 1]);
+    PANEL[2].push([7, 1, 8 * i, 24, , 1]);
+    PANEL[2].push([6, 1, 8 * i, 32, , 1]);
+}
+for (let i = 1; i < 5; i++) {
+    PANEL[4].push([8, 1, 16, 8 * i]);
+    PANEL[4].push([9, 1, 24, 8 * i]);
+    PANEL[4].push([9, 2, 32, 8 * i]);
+    PANEL[4].push([8, 2, 40, 8 * i, 1]);
+    PANEL[6].push([8, 2, 16, 8 * i]);
+    PANEL[6].push([9, 2, 24, 8 * i, 1]);
+    PANEL[6].push([9, 1, 32, 8 * i, 1]);
+    PANEL[6].push([8, 1, 40, 8 * i, 1]);
 }
 
-// const setBgMap = (bgMap, ptnArr, plt, x, y) => {
-//     // bgMap[y * 16 + x] = [ptnArr, plt];
-//     for (let i = 0; i < 16; i++) {
-//         bgMap[y * i + x] = [ptnArr, plt];
-//     }
-// };
+PANEL[1] = JSON.parse(JSON.stringify(PANEL[0]));
+PANEL[3] = JSON.parse(JSON.stringify(PANEL[2]));
+PANEL[5] = JSON.parse(JSON.stringify(PANEL[4]));
+PANEL[7] = JSON.parse(JSON.stringify(PANEL[6]));
 
-// const setBgMapMulch = (bgMap, ptnArr, plt, coordString) => {
-//     coordString
-//         .match(/.{2}/g)
-//         .map((coordXY) => coordXY.match(/.{1}/g).map((c) => parseInt(c, 16)))
-//         .forEach((coord) => setBgMap(bgMap, ptnArr, plt, coord[0], coord[1]));
-// };
-// const n03 = '0010200121022203230414244050515253548090A0A192838494A4C0D0E0E1C2D2E2E3C4D4E4';
-// const n47 = '20112102220313232440506041425262634454648090A0818292A283A38494A4C0D0E0C1E1E2D3D4';
-// setBgMapMulch(BG_MAP_0, [6, 6, 6, 6], 2, n03);
-// setBgMapMulch(BG_MAP_1, [6, 6, 6, 6], 2, n47);
+PANEL[8].push([6, 5, 48, 8]);
+PANEL[8].push([7, 5, 48, 16, , 1]);
+PANEL[8].push([7, 6, 48, 24, , 1]);
+PANEL[8].push([6, 6, 48, 32, , 1]);
+PANEL[8].push([10, 5, 40, 8, 1]);
+PANEL[8].push([11, 5, 32, 8, 1]);
+PANEL[8].push([12, 5, 40, 16, 1]);
+PANEL[8].push([13, 5, 32, 16, 1]);
+PANEL[8].push([14, 5, 24, 16, 1]);
+PANEL[8].push([15, 7, 40, 24, 1]);
+PANEL[8].push([16, 8, 32, 24, 1]);
+PANEL[8].push([17, 5, 24, 24, 1]);
+PANEL[8].push([18, 5, 16, 24, 1]);
+PANEL[8].push([19, 6, 40, 32, 1]);
+PANEL[8].push([20, 7, 32, 32, 1]);
+PANEL[8].push([21, 5, 24, 32, 1]);
+PANEL[8].push([22, 5, 16, 32, 1]);
 
-const buildBG = (BG_MAP) =>
-    BG_MAP.flatMap((bg, bgIdx) =>
-        bg === undefined
-            ? undefined
-            : bg[0].map((chrId, chrIdx) => [
-                  chrId,
-                  bg[1],
-                  (bgIdx % 16) * 16 + (chrIdx % 2) * 8,
-                  (bgIdx >> 4) * 16 + (chrIdx >> 1) * 8,
-              ]),
-    ).filter((bg) => bg !== undefined);
+PANEL[12].push([6, 2, 48, 8]);
+PANEL[12].push([7, 2, 48, 16, , 1]);
+PANEL[12].push([7, 1, 48, 24, , 1]);
+PANEL[12].push([6, 1, 48, 32, , 1]);
+PANEL[12].push([10, 5, 40, 32, 1, 1]);
+PANEL[12].push([11, 5, 32, 32, 1, 1]);
+PANEL[12].push([12, 5, 40, 24, 1, 1]);
+PANEL[12].push([13, 5, 32, 24, 1, 1]);
+PANEL[12].push([14, 5, 24, 24, 1, 1]);
+PANEL[12].push([15, 7, 40, 16, 1, 1]);
+PANEL[12].push([16, 8, 32, 16, 1, 1]);
+PANEL[12].push([17, 5, 24, 16, 1, 1]);
+PANEL[12].push([18, 5, 16, 16, 1, 1]);
+PANEL[12].push([19, 6, 40, 8, 1, 1]);
+PANEL[12].push([20, 7, 32, 8, 1, 1]);
+PANEL[12].push([21, 5, 24, 8, 1, 1]);
+PANEL[12].push([22, 5, 16, 8, 1, 1]);
 
-const BG0 = buildBG(BG_MAP_0);
-// const BG1 = buildBG(BG_MAP_1);
+PANEL[9].push([6, 5, 8, 8]);
+PANEL[9].push([7, 5, 8, 16, , 1]);
+PANEL[9].push([7, 6, 8, 24, , 1]);
+PANEL[9].push([6, 6, 8, 32, , 1]);
+PANEL[9].push([10, 5, 16, 8]);
+PANEL[9].push([11, 5, 24, 8]);
+PANEL[9].push([12, 5, 16, 16]);
+PANEL[9].push([13, 5, 24, 16]);
+PANEL[9].push([14, 5, 32, 16]);
+PANEL[9].push([15, 7, 16, 24]);
+PANEL[9].push([16, 8, 24, 24]);
+PANEL[9].push([17, 5, 32, 24]);
+PANEL[9].push([18, 5, 40, 24]);
+PANEL[9].push([19, 6, 16, 32]);
+PANEL[9].push([20, 7, 24, 32]);
+PANEL[9].push([21, 5, 32, 32]);
+PANEL[9].push([22, 5, 40, 32]);
+
+PANEL[13].push([6, 2, 8, 8]);
+PANEL[13].push([7, 2, 8, 16, , 1]);
+PANEL[13].push([7, 1, 8, 24, , 1]);
+PANEL[13].push([6, 1, 8, 32, , 1]);
+PANEL[13].push([10, 5, 16, 32, , 1]);
+PANEL[13].push([11, 5, 24, 32, , 1]);
+PANEL[13].push([12, 5, 16, 24, , 1]);
+PANEL[13].push([13, 5, 24, 24, , 1]);
+PANEL[13].push([14, 5, 32, 24, , 1]);
+PANEL[13].push([15, 7, 16, 16, , 1]);
+PANEL[13].push([16, 8, 24, 16, , 1]);
+PANEL[13].push([17, 5, 32, 16, , 1]);
+PANEL[13].push([18, 5, 40, 16, , 1]);
+PANEL[13].push([19, 6, 16, 8, , 1]);
+PANEL[13].push([20, 7, 24, 8, , 1]);
+PANEL[13].push([21, 5, 32, 8, , 1]);
+PANEL[13].push([22, 5, 40, 8, , 1]);
+
+PANEL[10].push([6, 2, 48, 8]);
+PANEL[10].push([7, 2, 48, 16, , 1]);
+PANEL[10].push([7, 1, 48, 24, , 1]);
+PANEL[10].push([6, 1, 48, 32, , 1]);
+PANEL[10].push([10, 2, 40, 8, 1]);
+PANEL[10].push([11, 2, 32, 8, 1]);
+PANEL[10].push([12, 2, 40, 16, 1]);
+PANEL[10].push([13, 2, 32, 16, 1]);
+PANEL[10].push([14, 2, 24, 16, 1]);
+PANEL[10].push([15, 3, 40, 24, 1]);
+PANEL[10].push([16, 4, 32, 24, 1]);
+PANEL[10].push([17, 2, 24, 24, 1]);
+PANEL[10].push([18, 2, 16, 24, 1]);
+PANEL[10].push([19, 1, 40, 32, 1]);
+PANEL[10].push([20, 3, 32, 32, 1]);
+PANEL[10].push([21, 2, 24, 32, 1]);
+PANEL[10].push([22, 2, 16, 32, 1]);
+
+PANEL[14].push([6, 5, 48, 8]);
+PANEL[14].push([7, 5, 48, 16, , 1]);
+PANEL[14].push([7, 6, 48, 24, , 1]);
+PANEL[14].push([6, 6, 48, 32, , 1]);
+PANEL[14].push([10, 2, 40, 32, 1, 1]);
+PANEL[14].push([11, 2, 32, 32, 1, 1]);
+PANEL[14].push([12, 2, 40, 24, 1, 1]);
+PANEL[14].push([13, 2, 32, 24, 1, 1]);
+PANEL[14].push([14, 2, 24, 24, 1, 1]);
+PANEL[14].push([15, 3, 40, 16, 1, 1]);
+PANEL[14].push([16, 4, 32, 16, 1, 1]);
+PANEL[14].push([17, 2, 24, 16, 1, 1]);
+PANEL[14].push([18, 2, 16, 16, 1, 1]);
+PANEL[14].push([19, 1, 40, 8, 1, 1]);
+PANEL[14].push([20, 3, 32, 8, 1, 1]);
+PANEL[14].push([21, 2, 24, 8, 1, 1]);
+PANEL[14].push([22, 2, 16, 8, 1, 1]);
+
+PANEL[11].push([6, 2, 8, 8]);
+PANEL[11].push([7, 2, 8, 16, , 1]);
+PANEL[11].push([7, 1, 8, 24, , 1]);
+PANEL[11].push([6, 1, 8, 32, , 1]);
+PANEL[11].push([10, 2, 16, 8]);
+PANEL[11].push([11, 2, 24, 8]);
+PANEL[11].push([12, 2, 16, 16]);
+PANEL[11].push([13, 2, 24, 16]);
+PANEL[11].push([14, 2, 32, 16]);
+PANEL[11].push([15, 3, 16, 24]);
+PANEL[11].push([16, 4, 24, 24]);
+PANEL[11].push([17, 2, 32, 24]);
+PANEL[11].push([18, 2, 40, 24]);
+PANEL[11].push([19, 1, 16, 32]);
+PANEL[11].push([20, 3, 24, 32]);
+PANEL[11].push([21, 2, 32, 32]);
+PANEL[11].push([22, 2, 40, 32]);
+
+PANEL[15].push([6, 5, 8, 8]);
+PANEL[15].push([7, 5, 8, 16, , 1]);
+PANEL[15].push([7, 6, 8, 24, , 1]);
+PANEL[15].push([6, 6, 8, 32, , 1]);
+PANEL[15].push([10, 2, 16, 32, , 1]);
+PANEL[15].push([11, 2, 24, 32, , 1]);
+PANEL[15].push([12, 2, 16, 24, , 1]);
+PANEL[15].push([13, 2, 24, 24, , 1]);
+PANEL[15].push([14, 2, 32, 24, , 1]);
+PANEL[15].push([15, 3, 16, 16, , 1]);
+PANEL[15].push([16, 4, 24, 16, , 1]);
+PANEL[15].push([17, 2, 32, 16, , 1]);
+PANEL[15].push([18, 2, 40, 16, , 1]);
+PANEL[15].push([19, 1, 16, 8, , 1]);
+PANEL[15].push([20, 3, 24, 8, , 1]);
+PANEL[15].push([21, 2, 32, 8, , 1]);
+PANEL[15].push([22, 2, 40, 8, , 1]);
+
+console.log(PANEL);
+
+const PANEL_MAP = [...Array(16).keys()];
+// console.log(PANEL_MAP);
+
+const BG0 = PANEL_MAP.flatMap((pid) =>
+    PANEL[pid].map((chr) =>
+        chr.map((prm, id) =>
+            id == 2 ? prm + (pid % 4) * 64 : id == 3 ? prm + (pid >> 2) * 48 : prm,
+        ),
+    ),
+);
+// console.log(BG0);
 
 const SCALE = 3;
 // const SCALE = 2;
-let bgColor = '12';
+let bgColor = '32';
 const CANVAS = document.querySelector('#s canvas');
 const canvasRenderingCtx = CANVAS.getContext('2d');
 const CANVAS_WIDTH = 256 * SCALE; //256, 160
 const CANVAS_HEIGHT = 192 * SCALE; //240, 192, 144, 120
 CANVAS.width = CANVAS_WIDTH;
 CANVAS.height = CANVAS_HEIGHT;
+canvasRenderingCtx.imageSmoothingEnabled = false;
 canvasRenderingCtx.scale(SCALE, SCALE);
 const offScreenCanvas = new OffscreenCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 const offScreenCanvasRenderingCtx = offScreenCanvas.getContext('2d');
@@ -212,29 +401,11 @@ const drawChr = (chr) => {
     }
 };
 
-let bgX = 0;
-let bgSwitch = 0;
-let bgXVelocity = 0;
-
 const draw = () => {
     offScreenCanvasRenderingCtx.fillStyle = lch(bgColor);
     offScreenCanvasRenderingCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    bgX += bgXVelocity;
-    if (bgX > 256) {
-        bgX = 0;
-        bgSwitch = 1 - bgSwitch;
-    }
-    document.getElementById('debug').innerText = `bgX: ${bgX}, bgXVelocity: ${bgXVelocity}`;
-
-    // SPR.filter((chr) => chr[6] === 1).forEach(drawChr);
-
-    BG0.map((chr) => [chr[0], chr[1], chr[2] - bgX + 256 * (0 + bgSwitch), chr[3]]).forEach(
-        drawChr,
-    );
-    // BG1.map((chr) => [chr[0], chr[1], chr[2] - bgX + 256 * (1 - bgSwitch), chr[3]]).forEach(
-    //     drawChr,
-    // );
+    BG0.forEach(drawChr);
 
     // SPR.filter((chr) => chr[6] === 0).forEach(drawChr);
 
@@ -245,38 +416,38 @@ const draw = () => {
 
 draw();
 
-const walkStart = () => {
-    bgXVelocity = 2;
-};
+// const walkStart = () => {
+//     bgXVelocity = 2;
+// };
 
-const walkStop = () => {
-    bgXVelocity = 0;
-};
+// const walkStop = () => {
+//     bgXVelocity = 0;
+// };
 
-document.onkeydown = (e) => {
-    // if (e.repeat || pc.energyVal < 1) return;
-    if (e.repeat) return;
-    // console.log(e.key)
-    let k = e.key;
-    // if (k == ' ') {
-    //     let target = pcAttack();
-    //     if (target) console.log(target);
-    // } //攻撃中は移動したくない
-    // if (k == 'ArrowLeft' || k == 'a') walk('x', -1);
-    // if (k == 'ArrowRight' || k == 'd') walk('x', 1);
-    // if (k == 'ArrowDown' || k == 's') walk('y', 1);
-    // if (k == 'ArrowUp' || k == 'w') walk('y', -1);
-    if (k == 'ArrowRight' || k == 'd') walkStart();
-};
-document.onkeyup = (e) => {
-    //     if (pc.energyVal < 1) return;
-    //     let k = e.key;
-    //     if (k == 'ArrowLeft' || k == 'a') stop('x');
-    //     if (k == 'ArrowRight' || k == 'd') stop('x');
-    //     if (k == 'ArrowDown' || k == 's') stop('y');
-    //     if (k == 'ArrowUp' || k == 'w') stop('y');
-    if (e.key == 'ArrowRight' || e.key == 'd') walkStop();
-};
+// document.onkeydown = (e) => {
+// if (e.repeat || pc.energyVal < 1) return;
+// if (e.repeat) return;
+// console.log(e.key)
+// let k = e.key;
+// if (k == ' ') {
+//     let target = pcAttack();
+//     if (target) console.log(target);
+// } //攻撃中は移動したくない
+// if (k == 'ArrowLeft' || k == 'a') walk('x', -1);
+// if (k == 'ArrowRight' || k == 'd') walk('x', 1);
+// if (k == 'ArrowDown' || k == 's') walk('y', 1);
+// if (k == 'ArrowUp' || k == 'w') walk('y', -1);
+// if (k == 'ArrowRight' || k == 'd') walkStart();
+// };
+// document.onkeyup = (e) => {
+//     if (pc.energyVal < 1) return;
+//     let k = e.key;
+//     if (k == 'ArrowLeft' || k == 'a') stop('x');
+//     if (k == 'ArrowRight' || k == 'd') stop('x');
+//     if (k == 'ArrowDown' || k == 's') stop('y');
+//     if (k == 'ArrowUp' || k == 'w') stop('y');
+// if (e.key == 'ArrowRight' || e.key == 'd') walkStop();
+// };
 
 function adjustContainer() {
     // let scale;
