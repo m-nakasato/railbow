@@ -426,30 +426,48 @@ PANEL[15].push([9, 1, 24, 0]);
 PANEL[15].push([9, 2, 32, 0]);
 PANEL[15].push([8, 2, 40, 0, 1]);
 
-// [top, right, bottom, left]
+// [0: top, 1: bottom, 2: left, 3: right]
 const PANEL_TERMINAL = [
+    [, , 1, 1],
+    [, , 1, 1],
+    [, , 0, 0],
+    [, , 0, 0],
+    [1, 1],
+    [1, 1],
+    [0, 0],
+    [0, 0],
     [, 1, , 1],
-    [, 1, , 1],
+    [, 0, 1],
     [, 0, , 0],
-    [, 0, , 0],
-    [1, , 1],
-    [1, , 1],
+    [, 1, 0],
+    [1, , , 0],
     [0, , 0],
-    [0, , 0],
-    [, 1, 1],
-    [, , 0, 1],
-    [, 0, 0],
-    [, , 1, 0],
-    [1, 0],
-    [0, , , 0],
-    [0, 1],
-    [1, , , 1],
+    [0, , , 1],
+    [1, , 1],
 ];
 
-PANEL_TERMINAL.forEach((p, pid) => {
-    let column = pid % 4,
-        row = pid >> 2;
-    if (row == 0) {
+let PANEL_MAP = [...Array(16).keys()];
+// console.log(PANEL_MAP);
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+PANEL_MAP = shuffle(PANEL_MAP);
+console.log(PANEL_MAP);
+
+PANEL_MAP.forEach((pid, order) => {
+    let column = order % 4,
+        row = order >> 2;
+    if (
+        row == 0 ||
+        PANEL_TERMINAL[pid][0] === undefined ||
+        PANEL_TERMINAL[pid][0] != PANEL_TERMINAL[PANEL_MAP[order - 4]][1]
+    ) {
         [
             [3, 0, 8, 0], //          0: cloud t
             [4, 0, 16, 0], //         1:
@@ -459,7 +477,11 @@ PANEL_TERMINAL.forEach((p, pid) => {
             [3, 0, 48, 0, 1], //      5:
         ].forEach((c) => PANEL[pid].push(JSON.parse(JSON.stringify(c))));
     }
-    if (row == 3) {
+    if (
+        row == 3 ||
+        PANEL_TERMINAL[pid][1] === undefined ||
+        PANEL_TERMINAL[pid][1] != PANEL_TERMINAL[PANEL_MAP[order + 4]][0]
+    ) {
         [
             [3, 0, 8, 40, 0, 1], //   6: cloud b
             [4, 0, 16, 40, 0, 1], //  7:
@@ -469,7 +491,11 @@ PANEL_TERMINAL.forEach((p, pid) => {
             [3, 0, 48, 40, 1, 1], // 11:
         ].forEach((c) => PANEL[pid].push(JSON.parse(JSON.stringify(c))));
     }
-    if (column == 0) {
+    if (
+        column == 0 ||
+        PANEL_TERMINAL[pid][2] === undefined ||
+        PANEL_TERMINAL[pid][2] != PANEL_TERMINAL[PANEL_MAP[order - 1]][3]
+    ) {
         [
             [0, 0, 0, 0], //         12: cloud l
             [1, 0, 0, 8], //         13:
@@ -479,7 +505,11 @@ PANEL_TERMINAL.forEach((p, pid) => {
             [0, 0, 0, 40, 0, 1], //  17:
         ].forEach((c) => PANEL[pid].push(JSON.parse(JSON.stringify(c))));
     }
-    if (column == 3) {
+    if (
+        column == 3 ||
+        PANEL_TERMINAL[pid][3] === undefined ||
+        PANEL_TERMINAL[pid][3] != PANEL_TERMINAL[PANEL_MAP[order + 1]][2]
+    ) {
         [
             [0, 0, 56, 0, 1], //     18: cloud r
             [1, 0, 56, 8, 1], //     19:
@@ -493,13 +523,10 @@ PANEL_TERMINAL.forEach((p, pid) => {
 
 console.log(PANEL);
 
-const PANEL_MAP = [...Array(16).keys()];
-// console.log(PANEL_MAP);
-
-const BG0 = PANEL_MAP.flatMap((pid) =>
+const BG0 = PANEL_MAP.flatMap((pid, order) =>
     PANEL[pid].map((chr) =>
         chr.map((prm, id) =>
-            id == 2 ? prm + (pid % 4) * 64 : id == 3 ? prm + (pid >> 2) * 48 : prm,
+            id == 2 ? prm + (order % 4) * 64 : id == 3 ? prm + (order >> 2) * 48 : prm,
         ),
     ),
 );
