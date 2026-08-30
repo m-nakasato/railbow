@@ -132,34 +132,50 @@ const CHR = (
     'FVoFVgFWAVUAVQBVAFUAVQ' + //  20: rainbow c 2-4
     'AVYBVgFVAFUAVQBVAFUAVQ' + //  21: rainbow c 3-4
     'q/+q/6r/qv+q/6r/qv+q/w' + //  22: rainbow c 4-4
+    '//////////////++/in+CQ' + //  23: unicorn head 1
+    '//////6/+L/gv4L/Yr9abw' + //  24: unicorn head 2
+    '+grmAOWAlYCVgpWClYCWAA' + //  25: unicorn head 3
+    'VW+lWwqvoC8oL6gLoAIAIg' + //  26: unicorn head 4
+    'VgCYAKAAAAAAAAAAAAAAAA' + //  27: unicorn front 1
+    'AAuqry//L/8v/y//L/+//w' + //  28: unicorn front 2
+    'AgKqAuCC5YL6lv/r/////w' + //  29: unicorn front 3
+    '/+r/lf5V/lb+Vv5W/lapVg' + //  30: unicorn back 1
+    'vqpoAKAC4ADgAOAA4ADgAA' + //  31: unicorn back 2
+    '5Vv6r////////////////w' + //  32: unicorn back 3
+    '4AiAKoCLgluWr+v//////w' + //  33: unicorn back 4
     ''
 )
     .match(/.{22}/g)
     .map((chr) => readChr(chr));
 
 const PLT = [
-    '321030', // 0: cloud
-    '262824', // 1: red yellow purple
-    '2a2c22', // 2: green blue violet
-    '26282a', // 3: red yellow green
-    '282a2c', // 4: yellow green blue
-    '282624', // 5: yellow red purple
-    '2c2a22', // 6: blue green violet
-    '2c2a28', // 7: blue green yellow
-    '2a2826', // 8: green yellow red
+    '321030', //  0: cloud
+    '262824', //  1: rainbow red yellow purple
+    '2a2c22', //  2: rainbow green blue violet
+    '26282a', //  3: rainbow red yellow green
+    '282a2c', //  4: rainbow yellow green blue
+    '282624', //  5: rainbow yellow red purple
+    '2c2a22', //  6: rainbow blue green violet
+    '2c2a28', //  7: rainbow blue green yellow
+    '2a2826', //  8: rainbow green yellow red
+    '382300', //  9: unicorn 1
+    '202300', // 10: unicorn 2
 ].map((p) => p.match(/.{2}/g));
 
 // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
-// const SPR = [
-//     [0, 0, 120, 128, 0, 0, 0],
-//     [1, 0, 128, 128, 0, 0, 0],
-//     [2, 0, 120, 136, 0, 0, 0],
-//     [3, 0, 128, 136, 0, 0, 0],
-//     [4, 0, 120, 144, 0, 0, 0],
-//     [4, 0, 128, 144, 1, 0, 0],
-//     [5, 0, 120, 152, 0, 0, 0],
-//     [5, 0, 128, 152, 1, 0, 0],
-// ];
+const SPR = [
+    [23, 10, 16, 0],
+    [24, 9, 24, 0],
+    [25, 10, 16, 8],
+    [26, 10, 24, 8],
+    [27, 10, 16, 16],
+    [28, 10, 24, 16],
+    [29, 10, 16, 24],
+    [30, 10, 0, 16],
+    [31, 10, 8, 16],
+    [32, 10, 0, 24],
+    [33, 10, 8, 24],
+];
 
 // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
 // const PANEL = [...Array(16)].map(() => JSON.parse(JSON.stringify(PANEL_TEMPLATE)));
@@ -439,83 +455,72 @@ const REMOVAL_PID = PANEL_MAP[removalMapId];
 PANEL[REMOVAL_PID] = [];
 PANEL_TERMINAL[REMOVAL_PID] = [];
 
-// const setCloud = (column, row) => {
-//     PANEL_MAP.forEach((pid, order) => {
-//         let column = order % 4,
-//             row = order >> 2;
-//         if (
-//             row == 0 ||
-//             PANEL_TERMINAL[pid][0] === undefined ||
-//             PANEL_TERMINAL[pid][0] != PANEL_TERMINAL[PANEL_MAP[order - 4]][1]
-//         ) {
-//             [
-//                 [3, 0, 8, 0], //          0: cloud t
-//                 [4, 0, 16, 0], //         1:
-//                 [5, 0, 24, 0], //         2:
-//                 [5, 0, 32, 0, 1], //      3:
-//                 [4, 0, 40, 0, 1], //      4:
-//                 [3, 0, 48, 0, 1], //      5:
-//             ].forEach((c) => PANEL[pid].push(JSON.parse(JSON.stringify(c))));
-//         }
-//         if (
-//             row == 3 ||
-//             PANEL_TERMINAL[pid][1] === undefined ||
-//             PANEL_TERMINAL[pid][1] != PANEL_TERMINAL[PANEL_MAP[order + 4]][0]
-//         ) {
-//             [
-//                 [3, 0, 8, 40, 0, 1], //   6: cloud b
-//                 [4, 0, 16, 40, 0, 1], //  7:
-//                 [5, 0, 24, 40, 0, 1], //  8:
-//                 [5, 0, 32, 40, 1, 1], //  9:
-//                 [4, 0, 40, 40, 1, 1], // 10:
-//                 [3, 0, 48, 40, 1, 1], // 11:
-//             ].forEach((c) => PANEL[pid].push(JSON.parse(JSON.stringify(c))));
-//         }
-//         if (
-//             column == 0 ||
-//             PANEL_TERMINAL[pid][2] === undefined ||
-//             PANEL_TERMINAL[pid][2] != PANEL_TERMINAL[PANEL_MAP[order - 1]][3]
-//         ) {
-//             [
-//                 [0, 0, 0, 0], //         12: cloud l
-//                 [1, 0, 0, 8], //         13:
-//                 [2, 0, 0, 16], //        14:
-//                 [2, 0, 0, 24, 0, 1], //  15:
-//                 [1, 0, 0, 32, 0, 1], //  16:
-//                 [0, 0, 0, 40, 0, 1], //  17:
-//             ].forEach((c) => PANEL[pid].push(JSON.parse(JSON.stringify(c))));
-//         }
-//         if (
-//             column == 3 ||
-//             PANEL_TERMINAL[pid][3] === undefined ||
-//             PANEL_TERMINAL[pid][3] != PANEL_TERMINAL[PANEL_MAP[order + 1]][2]
-//         ) {
-//             [
-//                 [0, 0, 56, 0, 1], //     18: cloud r
-//                 [1, 0, 56, 8, 1], //     19:
-//                 [2, 0, 56, 16, 1], //    20:
-//                 [2, 0, 56, 24, 1, 1], // 21:
-//                 [1, 0, 56, 32, 1, 1], // 22:
-//                 [0, 0, 56, 40, 1, 1], // 23:
-//             ].forEach((c) => PANEL[pid].push(JSON.parse(JSON.stringify(c))));
-//         }
-//     });
-// };
-// setCloud();
-
-// console.log(PANEL);
-
-// let BG0 = PANEL_MAP.flatMap((pid, order) =>
-//     PANEL[pid].map((chr) =>
-//         chr.map((prm, id) =>
-//             id == 2 ? prm + (order % 4) * 64 : id == 3 ? prm + (order >> 2) * 48 : prm,
-//         ),
-//     ),
-// );
 const setBg = () =>
     PANEL_MAP.flatMap((pid, order) => {
-        // setCloud(column, row);
-        return PANEL[pid].map((chr) =>
+        const column = order % 4,
+            row = order >> 2;
+        const chrSet = [...PANEL[pid]];
+        // //cloud t
+        if (
+            row == 0 ||
+            PANEL_TERMINAL[pid][0] === undefined ||
+            PANEL_TERMINAL[pid][0] != PANEL_TERMINAL[PANEL_MAP[order - 4]][1]
+        ) {
+            [
+                [3, 0, 8, 0], //          0: cloud t
+                [4, 0, 16, 0], //         1:
+                [5, 0, 24, 0], //         2:
+                [5, 0, 32, 0, 1], //      3:
+                [4, 0, 40, 0, 1], //      4:
+                [3, 0, 48, 0, 1], //      5:
+            ].forEach((c) => chrSet.push(c));
+        }
+        // //cloud b
+        if (
+            row == 3 ||
+            PANEL_TERMINAL[pid][1] === undefined ||
+            PANEL_TERMINAL[pid][1] != PANEL_TERMINAL[PANEL_MAP[order + 4]][0]
+        ) {
+            [
+                [3, 0, 8, 40, 0, 1], //   6: cloud b
+                [4, 0, 16, 40, 0, 1], //  7:
+                [5, 0, 24, 40, 0, 1], //  8:
+                [5, 0, 32, 40, 1, 1], //  9:
+                [4, 0, 40, 40, 1, 1], // 10:
+                [3, 0, 48, 40, 1, 1], // 11:
+            ].forEach((c) => chrSet.push(c));
+        }
+        // //cloud l
+        if (
+            column == 0 ||
+            PANEL_TERMINAL[pid][2] === undefined ||
+            PANEL_TERMINAL[pid][2] != PANEL_TERMINAL[PANEL_MAP[order - 1]][3]
+        ) {
+            [
+                [0, 0, 0, 0], //         12: cloud l
+                [1, 0, 0, 8], //         13:
+                [2, 0, 0, 16], //        14:
+                [2, 0, 0, 24, 0, 1], //  15:
+                [1, 0, 0, 32, 0, 1], //  16:
+                [0, 0, 0, 40, 0, 1], //  17:
+            ].forEach((c) => chrSet.push(c));
+        }
+        // //cloud r
+        if (
+            column == 3 ||
+            PANEL_TERMINAL[pid][3] === undefined ||
+            PANEL_TERMINAL[pid][3] != PANEL_TERMINAL[PANEL_MAP[order + 1]][2]
+        ) {
+            [
+                [0, 0, 56, 0, 1], //     18: cloud r
+                [1, 0, 56, 8, 1], //     19:
+                [2, 0, 56, 16, 1], //    20:
+                [2, 0, 56, 24, 1, 1], // 21:
+                [1, 0, 56, 32, 1, 1], // 22:
+                [0, 0, 56, 40, 1, 1], // 23:
+            ].forEach((c) => chrSet.push(c));
+        }
+        return chrSet.map((chr) =>
             chr.map((prm, id) =>
                 id == 2 ? prm + (order % 4) * 64 : id == 3 ? prm + (order >> 2) * 48 : prm,
             ),
@@ -556,7 +561,7 @@ const draw = () => {
 
     BG0.forEach(drawChr);
 
-    // SPR.filter((chr) => chr[6] === 0).forEach(drawChr);
+    SPR.filter((chr) => chr[6] === 0 || chr[6] === undefined).forEach(drawChr);
 
     canvasRenderingCtx.drawImage(offScreenCanvas, 0, 0);
 
@@ -610,7 +615,6 @@ CANVAS.onclick = (e) => {
     }
     PANEL_MAP[removalMapId] = REMOVAL_PID;
     // console.log('clickMapId: ' + clickMapId, 'removalMapId: ' + removalMapId);
-    // setCloud();
     BG0 = setBg();
 
     draw();
