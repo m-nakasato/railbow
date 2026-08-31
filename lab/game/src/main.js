@@ -132,17 +132,21 @@ const CHR = (
     'FVoFVgFWAVUAVQBVAFUAVQ' + //  20: rainbow c 2-4
     'AVYBVgFVAFUAVQBVAFUAVQ' + //  21: rainbow c 3-4
     'q/+q/6r/qv+q/6r/qv+q/w' + //  22: rainbow c 4-4
-    '//////////////++/in+CQ' + //  23: unicorn head 1
-    '//////6/+L/gv4L/Yr9abw' + //  24: unicorn head 2
-    '+grmAOWAlYCVgpWClYCWAA' + //  25: unicorn head 3
-    'VW+lWwqvoC8oL6gLoAIAIg' + //  26: unicorn head 4
-    'VgCYAKAAAAAAAAAAAAAAAA' + //  27: unicorn front 1
-    'AAuqry//L/8v/y//L/+//w' + //  28: unicorn front 2
-    'AgKqAuCC5YL6lv/r/////w' + //  29: unicorn front 3
-    '/+r/lf5V/lb+Vv5W/lapVg' + //  30: unicorn back 1
-    'vqpoAKAC4ADgAOAA4ADgAA' + //  31: unicorn back 2
-    '5Vv6r////////////////w' + //  32: unicorn back 3
-    '4AiAKoCLgluWr+v//////w' + //  33: unicorn back 4
+    '//////////////++/in+CQ' + //  23: unicorn  0 head
+    '//////6/+L/gv4L/Yr9abw' + //  24: unicorn  1 head
+    '+grmAOWAlYCVgpWClYCWAA' + //  25: unicorn  2 head
+    'VW+lWwqvoC8oL6gLoAIAIg' + //  26: unicorn  3 head
+    'VgCYAKAAAAAAAAAAAAAAAA' + //  27: unicorn  4 front
+    'AAuqry//L/8v/y//L/+//w' + //  28: unicorn  5 front
+    'AgKqAviC+YL+lv/r/////w' + //  29: unicorn  6 front
+    '/+r/lf5V/lb+Vv5W/lapVg' + //  30: unicorn  7 back
+    'vqpoAKAC4ADgAOAA4ADgAA' + //  31: unicorn  8 back
+    '5Vv6r////////////////w' + //  32: unicorn  9 back
+    '4AiAKoCLgluWr+v//////w' + //  33: unicorn 10 back
+    'AgKqAv4K+Ar5a/6//////w' + //  34: unicorn  6 front
+    '//7/6f+V/5b+Vv5W/la+Vg' + //  35: unicorn  7 back
+    'qVblW/qv/////////////w' + //  36: unicorn  9 back
+    'oAiICoILlgvqW/+v/////w' + //  37: unicorn 10 back
     ''
 )
     .match(/.{22}/g)
@@ -163,19 +167,47 @@ const PLT = [
 ].map((p) => p.match(/.{2}/g));
 
 // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
-const SPR = [
-    [23, 10, 16, 0],
-    [24, 9, 24, 0],
-    [25, 10, 16, 8],
-    [26, 10, 24, 8],
-    [27, 10, 16, 16],
-    [28, 10, 24, 16],
-    [29, 10, 16, 24],
-    [30, 10, 0, 16],
-    [31, 10, 8, 16],
-    [32, 10, 0, 24],
-    [33, 10, 8, 24],
+let SPR = [];
+
+const sprUnicornR0 = [
+    [23, 10, 16, 0], //  0 head
+    [24, 9, 24, 0], //   1 head
+    [25, 10, 16, 8], //  2 head
+    [26, 10, 24, 8], //  3 head
+    [27, 10, 16, 16], // 4 front
+    [28, 10, 24, 16], // 5 front
+    [29, 10, 16, 24], // 6 front
+    [30, 10, 0, 16], //  7 back
+    [31, 10, 8, 16], //  8 back
+    [32, 10, 0, 24], //  9 back
+    [33, 10, 8, 24], // 10 back
 ];
+
+const sprUnicornR1 = [...sprUnicornR0];
+sprUnicornR1[6] = [34, 10, 16, 24];
+sprUnicornR1[7] = [35, 10, 0, 16];
+sprUnicornR1[9] = [36, 10, 0, 24];
+sprUnicornR1[10] = [37, 10, 8, 24];
+
+const sprUnicornL0 = [
+    [23, 10, 8, 0, 1], //    0 head
+    [24, 9, 0, 0, 1], //     1 head
+    [25, 10, 8, 8, 1], //    2 head
+    [26, 10, 0, 8, 1], //    3 head
+    [27, 10, 8, 16, 1], //   4 front
+    [28, 10, 0, 16, 1], //   5 front
+    [29, 10, 8, 24, 1], //   6 front
+    [30, 10, 24, 16, 1], //  7 back
+    [31, 10, 16, 16, 1], //  8 back
+    [32, 10, 24, 24, 1], //  9 back
+    [33, 10, 16, 24, 1], // 10 back
+];
+
+const sprUnicornL1 = [...sprUnicornL0];
+sprUnicornL1[6] = [34, 10, 8, 24, 1];
+sprUnicornL1[7] = [35, 10, 24, 16, 1];
+sprUnicornL1[9] = [36, 10, 24, 24, 1];
+sprUnicornL1[10] = [37, 10, 16, 24, 1];
 
 // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
 // const PANEL = [...Array(16)].map(() => JSON.parse(JSON.stringify(PANEL_TEMPLATE)));
@@ -417,22 +449,22 @@ PANEL[15].push([8, 2, 40, 0, 1]);
 
 // [0: top, 1: bottom, 2: left, 3: right]
 const PANEL_TERMINAL = [
-    [, , 1, 1],
-    [, , 1, 1],
-    [, , 0, 0],
-    [, , 0, 0],
-    [1, 1],
-    [1, 1],
-    [0, 0],
-    [0, 0],
-    [, 1, , 1],
-    [, 0, 1],
-    [, 0, , 0],
-    [, 1, 0],
-    [1, , , 0],
-    [0, , 0],
-    [0, , , 1],
-    [1, , 1],
+    [, , 1, 1], //  0
+    [, , 1, 1], //  1
+    [, , 0, 0], //  2
+    [, , 0, 0], //  3
+    [1, 1], //      4
+    [1, 1], //      5
+    [0, 0], //      6
+    [0, 0], //      7
+    [, 1, , 1], //  8
+    [, 0, 1], //    9
+    [, 0, , 0], // 10
+    [, 1, 0], //   11
+    [1, , , 0], // 12
+    [0, , 0], //   13
+    [0, , , 1], // 14
+    [1, , 1], //   15
 ];
 
 let PANEL_MAP = [...Array(16).keys()];
@@ -450,6 +482,7 @@ PANEL_MAP = shuffle(PANEL_MAP);
 // console.log(PANEL_MAP);
 
 // PANEL_MAP[15] じゃなく、角のパネル以外のどれかランダムにしたい
+//ゴールのパネルを作る？
 let removalMapId = 15;
 const REMOVAL_PID = PANEL_MAP[removalMapId];
 PANEL[REMOVAL_PID] = [];
@@ -540,35 +573,128 @@ CANVAS.width = CANVAS_WIDTH;
 CANVAS.height = CANVAS_HEIGHT;
 canvasRenderingCtx.imageSmoothingEnabled = false;
 canvasRenderingCtx.scale(SCALE, SCALE);
-const offScreenCanvas = new OffscreenCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-const offScreenCanvasRenderingCtx = offScreenCanvas.getContext('2d');
+const oscBg = new OffscreenCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+const oscBgCtx = oscBg.getContext('2d');
+const oscSp = new OffscreenCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+const oscSpCtx = oscSp.getContext('2d');
 
-const drawChr = (chr) => {
+const drawChr = (chr, oscCtx) => {
     for (let i = 0; i < 64; i++) {
         const flipH = chr[4] ? 7 : 0,
             flipV = chr[5] ? 56 : 0,
             color = CHR[chr[0]][i ^ flipH ^ flipV];
         if (color < 3) {
-            offScreenCanvasRenderingCtx.fillStyle = lch(PLT[chr[1]][color]);
-            offScreenCanvasRenderingCtx.fillRect(chr[2] + (i % 8), chr[3] + (i >> 3), 1, 1);
+            oscCtx.fillStyle = lch(PLT[chr[1]][color]);
+            oscCtx.fillRect(chr[2] + (i % 8), chr[3] + (i >> 3), 1, 1);
         }
     }
 };
 
-const draw = () => {
-    offScreenCanvasRenderingCtx.fillStyle = lch(bgColor);
-    offScreenCanvasRenderingCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+const drawBG = () => {
+    oscBgCtx.fillStyle = lch(bgColor);
+    oscBgCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    BG0.forEach(drawChr);
-
-    SPR.filter((chr) => chr[6] === 0 || chr[6] === undefined).forEach(drawChr);
-
-    canvasRenderingCtx.drawImage(offScreenCanvas, 0, 0);
-
-    // requestAnimationFrame(draw);
+    BG0.forEach((chr) => drawChr(chr, oscBgCtx));
 };
+drawBG();
 
-draw();
+const unicorn = { panel: 0, x: 16, y: 16, direction: 'N', lr: 'R' };
+
+let lastTime = 0;
+
+const main = (timestamp) => {
+    const counter = Math.floor(timestamp / 250);
+    // document.querySelector('#debug').innerHTML = counter + ': ' + (counter % 2);
+    document.querySelector('#debug').innerHTML =
+        'panel: ' +
+        unicorn.panel +
+        ', pid: ' +
+        PANEL_MAP[unicorn.panel] +
+        ', ' +
+        PANEL_TERMINAL[PANEL_MAP[unicorn.panel]][1];
+
+    if (timestamp - lastTime > 32) {
+        const terminal = PANEL_TERMINAL[PANEL_MAP[unicorn.panel]];
+        if (unicorn.direction == 'N') {
+            if (unicorn.y > 16) {
+                unicorn.y--;
+                // unicorn.x -= 2;
+                lastTime = timestamp;
+            } else if (unicorn.y > 0 && terminal[0] !== undefined) {
+                unicorn.y--;
+                // unicorn.x -= 2;
+                lastTime = timestamp;
+            } else {
+                unicorn.direction = unicorn.y == 0 ? 'S' : terminal[2] !== undefined ? 'W' : 'E';
+            }
+        }
+        if (unicorn.direction == 'S') {
+            // if (unicorn.y < 32) {
+            if (unicorn.y < 16) {
+                unicorn.y++;
+                // unicorn.x += 2;
+                lastTime = timestamp;
+            } else if (unicorn.y < 32 && terminal[1] !== undefined) {
+                unicorn.y++;
+                // unicorn.x += 2;
+                lastTime = timestamp;
+            } else {
+                unicorn.direction = unicorn.y == 32 ? 'N' : terminal[2] !== undefined ? 'W' : 'E';
+            }
+        }
+        if (unicorn.direction == 'W') {
+            unicorn.lr = 'L';
+            if (unicorn.x > 16) {
+                unicorn.x--;
+                // unicorn.x -= 2;
+                lastTime = timestamp;
+            } else if (unicorn.x > 0 && terminal[2] !== undefined) {
+                unicorn.x--;
+                // unicorn.x -= 2;
+                lastTime = timestamp;
+            } else {
+                unicorn.direction = unicorn.x == 0 ? 'E' : terminal[0] !== undefined ? 'N' : 'S';
+            }
+        }
+        if (unicorn.direction == 'E') {
+            unicorn.lr = 'R';
+            if (unicorn.x < 16) {
+                unicorn.x++;
+                // unicorn.x += 2;
+                lastTime = timestamp;
+            } else if (unicorn.x < 32 && terminal[3] !== undefined) {
+                unicorn.x++;
+                // unicorn.x += 2;
+                lastTime = timestamp;
+            } else {
+                unicorn.direction = unicorn.x == 32 ? 'W' : terminal[0] !== undefined ? 'N' : 'S';
+            }
+        }
+    }
+
+    oscSpCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    SPR =
+        unicorn.lr == 'R'
+            ? counter % 2 == 0
+                ? [...sprUnicornR0]
+                : [...sprUnicornR1]
+            : counter % 2 == 0
+              ? [...sprUnicornL0]
+              : [...sprUnicornL1];
+    const xOffset = unicorn.x + (unicorn.panel % 4) * 64;
+    const yOffset = unicorn.y + (unicorn.panel >> 2) * 48 - 21;
+    // document.querySelector('#debug').innerHTML = 'xOffset: ' + xOffset + ', yOffset: ' + yOffset;
+    //0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority
+    SPR.map((s) => [s[0], s[1], s[2] + xOffset, s[3] + yOffset, s[4], s[5], s[6]])
+        .filter((chr) => chr[6] === 0 || chr[6] === undefined)
+        .forEach((chr) => drawChr(chr, oscSpCtx));
+
+    canvasRenderingCtx.drawImage(oscBg, 0, 0);
+    canvasRenderingCtx.drawImage(oscSp, 0, 0);
+
+    requestAnimationFrame(main);
+};
+main();
 
 CANVAS.onclick = (e) => {
     const rect = e.target.getBoundingClientRect();
@@ -581,77 +707,58 @@ CANVAS.onclick = (e) => {
     const clickMapId = clickRow * 4 + clickCol;
     const removalCol = removalMapId % 4;
     const removalRow = removalMapId >> 2;
+
+    const unicornCol = unicorn.panel % 4;
+    const unicornRow = unicorn.panel >> 2;
+
+    // vertical slide
     if (clickCol == removalCol) {
+        // north
         if (clickRow > removalRow) {
-            // console.log('n');
             for (let i = removalRow + 1; i <= clickRow; i++) {
                 PANEL_MAP[(i - 1) * 4 + clickCol] = PANEL_MAP[i * 4 + clickCol];
             }
             removalMapId = clickMapId;
+            if (unicornCol == clickCol && unicornRow > removalRow && unicornRow <= clickRow)
+                unicorn.panel = unicorn.panel - 4;
         }
+        // south
         if (clickRow < removalRow) {
-            // console.log('s');
             for (let i = removalRow - 1; i >= clickRow; i--) {
                 PANEL_MAP[(i + 1) * 4 + clickCol] = PANEL_MAP[i * 4 + clickCol];
             }
             removalMapId = clickMapId;
+            if (unicornCol == clickCol && unicornRow < removalRow && unicornRow >= clickRow)
+                unicorn.panel = unicorn.panel + 4;
         }
     }
+    // horizontal slide
     if (clickRow == removalRow) {
+        // west
         if (clickCol > removalCol) {
-            // console.log('w');
             for (let i = removalCol + 1; i <= clickCol; i++) {
                 PANEL_MAP[clickRow * 4 + i - 1] = PANEL_MAP[clickRow * 4 + i];
             }
             removalMapId = clickMapId;
+            if (unicornRow == clickRow && unicornCol > removalCol && unicornCol <= clickCol)
+                unicorn.panel = unicorn.panel - 1;
         }
+        // east
         if (clickCol < removalCol) {
-            // console.log('e');
             for (let i = removalCol - 1; i >= clickCol; i--) {
                 PANEL_MAP[clickRow * 4 + i + 1] = PANEL_MAP[clickRow * 4 + i];
             }
             removalMapId = clickMapId;
+            if (unicornRow == clickRow && unicornCol < removalCol && unicornCol >= clickCol)
+                unicorn.panel = unicorn.panel + 1;
         }
     }
     PANEL_MAP[removalMapId] = REMOVAL_PID;
     // console.log('clickMapId: ' + clickMapId, 'removalMapId: ' + removalMapId);
     BG0 = setBg();
 
-    draw();
+    drawBG();
 };
-
-// const walkStart = () => {
-//     bgXVelocity = 2;
-// };
-
-// const walkStop = () => {
-//     bgXVelocity = 0;
-// };
-
-// document.onkeydown = (e) => {
-// if (e.repeat || pc.energyVal < 1) return;
-// if (e.repeat) return;
-// console.log(e.key)
-// let k = e.key;
-// if (k == ' ') {
-//     let target = pcAttack();
-//     if (target) console.log(target);
-// } //攻撃中は移動したくない
-// if (k == 'ArrowLeft' || k == 'a') walk('x', -1);
-// if (k == 'ArrowRight' || k == 'd') walk('x', 1);
-// if (k == 'ArrowDown' || k == 's') walk('y', 1);
-// if (k == 'ArrowUp' || k == 'w') walk('y', -1);
-// if (k == 'ArrowRight' || k == 'd') walkStart();
-// };
-// document.onkeyup = (e) => {
-//     if (pc.energyVal < 1) return;
-//     let k = e.key;
-//     if (k == 'ArrowLeft' || k == 'a') stop('x');
-//     if (k == 'ArrowRight' || k == 'd') stop('x');
-//     if (k == 'ArrowDown' || k == 's') stop('y');
-//     if (k == 'ArrowUp' || k == 'w') stop('y');
-// if (e.key == 'ArrowRight' || e.key == 'd') walkStop();
-// };
 
 function adjustContainer() {
     // let scale;
