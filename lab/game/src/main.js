@@ -598,76 +598,119 @@ const drawBG = () => {
 };
 drawBG();
 
-const unicorn = { panel: 0, x: 16, y: 16, direction: 'N', lr: 'R' };
+const unicorn = { panel: 0, x: 32, y: 24, direction: 'N', lr: 'R' };
 
 let lastTime = 0;
 
 const main = (timestamp) => {
     const counter = Math.floor(timestamp / 250);
     // document.querySelector('#debug').innerHTML = counter + ': ' + (counter % 2);
-    document.querySelector('#debug').innerHTML =
-        'panel: ' +
-        unicorn.panel +
-        ', pid: ' +
-        PANEL_MAP[unicorn.panel] +
-        ', ' +
-        PANEL_TERMINAL[PANEL_MAP[unicorn.panel]][1];
+    // document.querySelector('#debug').innerHTML =
+    //     'panel: ' +
+    //     unicorn.panel +
+    //     ', pid: ' +
+    //     PANEL_MAP[unicorn.panel] +
+    //     ', ' +
+    //     PANEL_TERMINAL[PANEL_MAP[unicorn.panel]][1];
 
     if (timestamp - lastTime > 32) {
         const terminal = PANEL_TERMINAL[PANEL_MAP[unicorn.panel]];
         if (unicorn.direction == 'N') {
-            if (unicorn.y > 16) {
+            if (unicorn.y > 24) {
                 unicorn.y--;
-                // unicorn.x -= 2;
                 lastTime = timestamp;
             } else if (unicorn.y > 0 && terminal[0] !== undefined) {
                 unicorn.y--;
-                // unicorn.x -= 2;
                 lastTime = timestamp;
             } else {
-                unicorn.direction = unicorn.y == 0 ? 'S' : terminal[2] !== undefined ? 'W' : 'E';
+                // unicorn.direction = unicorn.y == 0 ? 'S' : terminal[2] !== undefined ? 'W' : 'E';
+                if (unicorn.y == 0) {
+                    if (
+                        unicorn.panel >> 2 > 0 &&
+                        terminal[0] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel - 4]][1]
+                    ) {
+                        unicorn.panel -= 4;
+                        unicorn.y = 48;
+                    } else {
+                        unicorn.direction = 'S';
+                    }
+                } else {
+                    unicorn.direction = terminal[2] !== undefined ? 'W' : 'E';
+                }
             }
         }
         if (unicorn.direction == 'S') {
-            // if (unicorn.y < 32) {
-            if (unicorn.y < 16) {
+            if (unicorn.y < 24) {
                 unicorn.y++;
-                // unicorn.x += 2;
                 lastTime = timestamp;
-            } else if (unicorn.y < 32 && terminal[1] !== undefined) {
+            } else if (unicorn.y < 48 && terminal[1] !== undefined) {
                 unicorn.y++;
-                // unicorn.x += 2;
                 lastTime = timestamp;
             } else {
-                unicorn.direction = unicorn.y == 32 ? 'N' : terminal[2] !== undefined ? 'W' : 'E';
+                // unicorn.direction = unicorn.y == 48 ? 'N' : terminal[2] !== undefined ? 'W' : 'E';
+                if (unicorn.y == 48) {
+                    if (
+                        unicorn.panel >> 2 < 3 &&
+                        terminal[1] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel + 4]][0]
+                    ) {
+                        unicorn.panel += 4;
+                        unicorn.y = 0;
+                    } else {
+                        unicorn.direction = 'N';
+                    }
+                } else {
+                    unicorn.direction = terminal[2] !== undefined ? 'W' : 'E';
+                }
             }
         }
         if (unicorn.direction == 'W') {
             unicorn.lr = 'L';
-            if (unicorn.x > 16) {
+            if (unicorn.x > 32) {
                 unicorn.x--;
-                // unicorn.x -= 2;
                 lastTime = timestamp;
             } else if (unicorn.x > 0 && terminal[2] !== undefined) {
                 unicorn.x--;
-                // unicorn.x -= 2;
                 lastTime = timestamp;
             } else {
-                unicorn.direction = unicorn.x == 0 ? 'E' : terminal[0] !== undefined ? 'N' : 'S';
+                // unicorn.direction = unicorn.x == 0 ? 'E' : terminal[0] !== undefined ? 'N' : 'S';
+                if (unicorn.x == 0) {
+                    if (
+                        unicorn.panel % 4 > 0 &&
+                        terminal[2] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel - 1]][3]
+                    ) {
+                        unicorn.panel--;
+                        unicorn.x = 64;
+                    } else {
+                        unicorn.direction = 'E';
+                    }
+                } else {
+                    unicorn.direction = terminal[0] !== undefined ? 'N' : 'S';
+                }
             }
         }
         if (unicorn.direction == 'E') {
             unicorn.lr = 'R';
-            if (unicorn.x < 16) {
+            if (unicorn.x < 32) {
                 unicorn.x++;
-                // unicorn.x += 2;
                 lastTime = timestamp;
-            } else if (unicorn.x < 32 && terminal[3] !== undefined) {
+            } else if (unicorn.x < 64 && terminal[3] !== undefined) {
                 unicorn.x++;
-                // unicorn.x += 2;
                 lastTime = timestamp;
             } else {
-                unicorn.direction = unicorn.x == 32 ? 'W' : terminal[0] !== undefined ? 'N' : 'S';
+                // unicorn.direction = unicorn.x == 64 ? 'W' : terminal[0] !== undefined ? 'N' : 'S';
+                if (unicorn.x == 64) {
+                    if (
+                        unicorn.panel % 4 < 3 &&
+                        terminal[3] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel + 1]][2]
+                    ) {
+                        unicorn.panel++;
+                        unicorn.x = 0;
+                    } else {
+                        unicorn.direction = 'W';
+                    }
+                } else {
+                    unicorn.direction = terminal[0] !== undefined ? 'N' : 'S';
+                }
             }
         }
     }
@@ -681,8 +724,8 @@ const main = (timestamp) => {
             : counter % 2 == 0
               ? [...sprUnicornL0]
               : [...sprUnicornL1];
-    const xOffset = unicorn.x + (unicorn.panel % 4) * 64;
-    const yOffset = unicorn.y + (unicorn.panel >> 2) * 48 - 21;
+    const xOffset = unicorn.x + (unicorn.panel % 4) * 64 - 16;
+    const yOffset = unicorn.y + (unicorn.panel >> 2) * 48 - 24;
     // document.querySelector('#debug').innerHTML = 'xOffset: ' + xOffset + ', yOffset: ' + yOffset;
     //0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority
     SPR.map((s) => [s[0], s[1], s[2] + xOffset, s[3] + yOffset, s[4], s[5], s[6]])
