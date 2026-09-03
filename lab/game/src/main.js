@@ -132,21 +132,23 @@ const CHR = (
     'FVoFVgFWAVUAVQBVAFUAVQ' + //  20: rainbow c 2-4
     'AVYBVgFVAFUAVQBVAFUAVQ' + //  21: rainbow c 3-4
     'q/+q/6r/qv+q/6r/qv+q/w' + //  22: rainbow c 4-4
-    '//////////////++/in+CQ' + //  23: unicorn  0 head
-    '//////6/+L/gv4L/Yr9abw' + //  24: unicorn  1 head
-    '+grmAOWAlYCVgpWClYCWAA' + //  25: unicorn  2 head
-    'VW+lWwqvoC8oL6gLoAIAIg' + //  26: unicorn  3 head
-    'VgCYAKAAAAAAAAAAAAAAAA' + //  27: unicorn  4 front
-    'AAuqry//L/8v/y//L/+//w' + //  28: unicorn  5 front
-    'AgKqAviC+YL+lv/r/////w' + //  29: unicorn  6 front
-    '/+r/lf5V/lb+Vv5W/lapVg' + //  30: unicorn  7 back
-    'vqpoAKAC4ADgAOAA4ADgAA' + //  31: unicorn  8 back
-    '5Vv6r////////////////w' + //  32: unicorn  9 back
-    '4AiAKoCLgluWr+v//////w' + //  33: unicorn 10 back
-    'AgKqAv4K+Ar5a/6//////w' + //  34: unicorn  6 front
-    '//7/6f+V/5b+Vv5W/la+Vg' + //  35: unicorn  7 back
-    'qVblW/qv/////////////w' + //  36: unicorn  9 back
-    'oAiICoILlgvqW/+v/////w' + //  37: unicorn 10 back
+    '/////////////v+5/in+CQ' + //  23: unicorn 0 head 0
+    '/////////+uri1YLqC9aLw' + //  24: unicorn 1 head 1
+    '+gLmAOWAlYCZgOWClYKmAA' + //  25: unicorn 2 head 2
+    'VZqlawlbApagKygLqAugCw' + //  26: unicorn 3 head 3
+    'VgBYAKAIAAIAAAAAAAIAAg' + //  27: unicorn 4 front 0
+    'AIsACwAvqr+//7///////w' + //  28: unicorn 5 front 1
+    'CAuoC+IL5gv6W/+v/////w' + //  29: unicorn 6 front 2
+    '/+r/lf5Z/mapluVb+q///w' + //  30: unicorn 7 back 0
+    'vqpoCaAC4ADgAOAA4ADgAA' + //  31: unicorn 8 back 1
+    '4AiAKoCLgluWr+v//////w' + //  32: unicorn 9 back 3
+    'CAuoCvgi+Cb5a/6//////w' + //  33: unicorn 6 front 2
+    '//7/6f+V/5q+ZumW5Vv6rw' + //  34: unicorn 7 back 0
+    'oAiICoILlgvqW/+v/////w' + //  35: unicorn 9 back 3
+    'VZqlawlbApagKwgLAAsACw' + //  36: unicorn 3 head 3 happy
+    'VZqlawlbApYAKwALCAugCw' + //  37: unicorn 3 head 3 sad
+    '//7/+f/5/+X/5aqVlVXlZQ' + //  38: star 0
+    '+CD+AP4A+AL4K+K/6////w' + //  39: star 1
     ''
 )
     .match(/.{22}/g)
@@ -162,12 +164,25 @@ const PLT = [
     '2c2a22', //  6: rainbow blue green violet
     '2c2a28', //  7: rainbow blue green yellow
     '2a2826', //  8: rainbow green yellow red
-    '382300', //  9: unicorn 1
-    '202300', // 10: unicorn 2
+    '382300', //  9: unicorn 0
+    '202300', // 10: unicorn 1
+    '382000', // 11: star 0
+    '383800', // 12: star 1
 ].map((p) => p.match(/.{2}/g));
 
-// [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
-let SPR = [];
+const sprStar0 = [
+    [38, 11, 24, 16],
+    [38, 11, 31, 16, 1],
+    [39, 11, 24, 24],
+    [39, 11, 31, 24, 1],
+];
+
+const sprStar1 = [
+    [38, 12, 24, 16],
+    [38, 12, 31, 16, 1],
+    [39, 12, 24, 24],
+    [39, 12, 31, 24, 1],
+];
 
 const sprUnicornR0 = [
     [23, 10, 16, 0], //  0 head
@@ -179,35 +194,31 @@ const sprUnicornR0 = [
     [29, 10, 16, 24], // 6 front
     [30, 10, 0, 16], //  7 back
     [31, 10, 8, 16], //  8 back
-    [32, 10, 0, 24], //  9 back
-    [33, 10, 8, 24], // 10 back
+    [32, 10, 8, 24], //  9 back
 ];
 
 const sprUnicornR1 = [...sprUnicornR0];
-sprUnicornR1[6] = [34, 10, 16, 24];
-sprUnicornR1[7] = [35, 10, 0, 16];
-sprUnicornR1[9] = [36, 10, 0, 24];
-sprUnicornR1[10] = [37, 10, 8, 24];
+sprUnicornR1[6] = [33, 10, 16, 24];
+sprUnicornR1[7] = [34, 10, 0, 16];
+sprUnicornR1[10] = [35, 10, 8, 24];
 
 const sprUnicornL0 = [
-    [23, 10, 8, 0, 1], //    0 head
-    [24, 9, 0, 0, 1], //     1 head
-    [25, 10, 8, 8, 1], //    2 head
-    [26, 10, 0, 8, 1], //    3 head
-    [27, 10, 8, 16, 1], //   4 front
-    [28, 10, 0, 16, 1], //   5 front
-    [29, 10, 8, 24, 1], //   6 front
-    [30, 10, 24, 16, 1], //  7 back
-    [31, 10, 16, 16, 1], //  8 back
-    [32, 10, 24, 24, 1], //  9 back
-    [33, 10, 16, 24, 1], // 10 back
+    [23, 10, 8, 0, 1], //   0 head
+    [24, 9, 0, 0, 1], //    1 head
+    [25, 10, 8, 8, 1], //   2 head
+    [26, 10, 0, 8, 1], //   3 head
+    [27, 10, 8, 16, 1], //  4 front
+    [28, 10, 0, 16, 1], //  5 front
+    [29, 10, 8, 24, 1], //  6 front
+    [30, 10, 24, 16, 1], // 7 back
+    [31, 10, 16, 16, 1], // 8 back
+    [32, 10, 16, 24, 1], // 9 back
 ];
 
 const sprUnicornL1 = [...sprUnicornL0];
-sprUnicornL1[6] = [34, 10, 8, 24, 1];
-sprUnicornL1[7] = [35, 10, 24, 16, 1];
-sprUnicornL1[9] = [36, 10, 24, 24, 1];
-sprUnicornL1[10] = [37, 10, 16, 24, 1];
+sprUnicornL1[6] = [33, 10, 8, 24, 1];
+sprUnicornL1[7] = [34, 10, 24, 16, 1];
+sprUnicornL1[10] = [35, 10, 16, 24, 1];
 
 // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
 // const PANEL = [...Array(16)].map(() => JSON.parse(JSON.stringify(PANEL_TEMPLATE)));
@@ -575,8 +586,10 @@ canvasRenderingCtx.imageSmoothingEnabled = false;
 canvasRenderingCtx.scale(SCALE, SCALE);
 const oscBg = new OffscreenCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 const oscBgCtx = oscBg.getContext('2d');
-const oscSp = new OffscreenCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-const oscSpCtx = oscSp.getContext('2d');
+const oscSp0 = new OffscreenCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+const oscSp0Ctx = oscSp0.getContext('2d');
+const oscSp1 = new OffscreenCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+const oscSp1Ctx = oscSp1.getContext('2d');
 
 const drawChr = (chr, oscCtx) => {
     for (let i = 0; i < 64; i++) {
@@ -591,8 +604,7 @@ const drawChr = (chr, oscCtx) => {
 };
 
 const drawBG = () => {
-    oscBgCtx.fillStyle = lch(bgColor);
-    oscBgCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    oscBgCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     BG0.forEach((chr) => drawChr(chr, oscBgCtx));
 };
@@ -600,141 +612,137 @@ drawBG();
 
 const unicorn = { panel: 0, x: 32, y: 24, direction: 'N', lr: 'R' };
 
-let lastTime = 0;
-
-const main = (timestamp) => {
-    const counter = Math.floor(timestamp / 250);
-    // document.querySelector('#debug').innerHTML = counter + ': ' + (counter % 2);
-    // document.querySelector('#debug').innerHTML =
-    //     'panel: ' +
-    //     unicorn.panel +
-    //     ', pid: ' +
-    //     PANEL_MAP[unicorn.panel] +
-    //     ', ' +
-    //     PANEL_TERMINAL[PANEL_MAP[unicorn.panel]][1];
-
-    if (timestamp - lastTime > 32) {
-        const terminal = PANEL_TERMINAL[PANEL_MAP[unicorn.panel]];
-        if (unicorn.direction == 'N') {
-            if (unicorn.y > 24) {
-                unicorn.y--;
-                lastTime = timestamp;
-            } else if (unicorn.y > 0 && terminal[0] !== undefined) {
-                unicorn.y--;
-                lastTime = timestamp;
-            } else {
-                // unicorn.direction = unicorn.y == 0 ? 'S' : terminal[2] !== undefined ? 'W' : 'E';
-                if (unicorn.y == 0) {
-                    if (
-                        unicorn.panel >> 2 > 0 &&
-                        terminal[0] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel - 4]][1]
-                    ) {
-                        unicorn.panel -= 4;
-                        unicorn.y = 48;
-                    } else {
-                        unicorn.direction = 'S';
-                    }
+const unicornMove = () => {
+    const terminal = PANEL_TERMINAL[PANEL_MAP[unicorn.panel]];
+    if (unicorn.direction == 'N') {
+        if (unicorn.y > 24) {
+            unicorn.y--;
+        } else if (unicorn.y > 0 && terminal[0] !== undefined) {
+            unicorn.y--;
+        } else {
+            if (unicorn.y == 0) {
+                if (
+                    unicorn.panel >> 2 > 0 &&
+                    terminal[0] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel - 4]][1]
+                ) {
+                    unicorn.panel -= 4;
+                    unicorn.y = 48;
                 } else {
-                    unicorn.direction = terminal[2] !== undefined ? 'W' : 'E';
+                    unicorn.direction = 'S';
                 }
-            }
-        }
-        if (unicorn.direction == 'S') {
-            if (unicorn.y < 24) {
-                unicorn.y++;
-                lastTime = timestamp;
-            } else if (unicorn.y < 48 && terminal[1] !== undefined) {
-                unicorn.y++;
-                lastTime = timestamp;
             } else {
-                // unicorn.direction = unicorn.y == 48 ? 'N' : terminal[2] !== undefined ? 'W' : 'E';
-                if (unicorn.y == 48) {
-                    if (
-                        unicorn.panel >> 2 < 3 &&
-                        terminal[1] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel + 4]][0]
-                    ) {
-                        unicorn.panel += 4;
-                        unicorn.y = 0;
-                    } else {
-                        unicorn.direction = 'N';
-                    }
-                } else {
-                    unicorn.direction = terminal[2] !== undefined ? 'W' : 'E';
-                }
-            }
-        }
-        if (unicorn.direction == 'W') {
-            unicorn.lr = 'L';
-            if (unicorn.x > 32) {
-                unicorn.x--;
-                lastTime = timestamp;
-            } else if (unicorn.x > 0 && terminal[2] !== undefined) {
-                unicorn.x--;
-                lastTime = timestamp;
-            } else {
-                // unicorn.direction = unicorn.x == 0 ? 'E' : terminal[0] !== undefined ? 'N' : 'S';
-                if (unicorn.x == 0) {
-                    if (
-                        unicorn.panel % 4 > 0 &&
-                        terminal[2] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel - 1]][3]
-                    ) {
-                        unicorn.panel--;
-                        unicorn.x = 64;
-                    } else {
-                        unicorn.direction = 'E';
-                    }
-                } else {
-                    unicorn.direction = terminal[0] !== undefined ? 'N' : 'S';
-                }
-            }
-        }
-        if (unicorn.direction == 'E') {
-            unicorn.lr = 'R';
-            if (unicorn.x < 32) {
-                unicorn.x++;
-                lastTime = timestamp;
-            } else if (unicorn.x < 64 && terminal[3] !== undefined) {
-                unicorn.x++;
-                lastTime = timestamp;
-            } else {
-                // unicorn.direction = unicorn.x == 64 ? 'W' : terminal[0] !== undefined ? 'N' : 'S';
-                if (unicorn.x == 64) {
-                    if (
-                        unicorn.panel % 4 < 3 &&
-                        terminal[3] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel + 1]][2]
-                    ) {
-                        unicorn.panel++;
-                        unicorn.x = 0;
-                    } else {
-                        unicorn.direction = 'W';
-                    }
-                } else {
-                    unicorn.direction = terminal[0] !== undefined ? 'N' : 'S';
-                }
+                unicorn.direction = terminal[2] !== undefined ? 'W' : 'E';
             }
         }
     }
+    if (unicorn.direction == 'S') {
+        if (unicorn.y < 24) {
+            unicorn.y++;
+        } else if (unicorn.y < 48 && terminal[1] !== undefined) {
+            unicorn.y++;
+        } else {
+            if (unicorn.y == 48) {
+                if (
+                    unicorn.panel >> 2 < 3 &&
+                    terminal[1] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel + 4]][0]
+                ) {
+                    unicorn.panel += 4;
+                    unicorn.y = 0;
+                } else {
+                    unicorn.direction = 'N';
+                }
+            } else {
+                unicorn.direction = terminal[2] !== undefined ? 'W' : 'E';
+            }
+        }
+    }
+    if (unicorn.direction == 'W') {
+        unicorn.lr = 'L';
+        if (unicorn.x > 32) {
+            unicorn.x--;
+        } else if (unicorn.x > 0 && terminal[2] !== undefined) {
+            unicorn.x--;
+        } else {
+            if (unicorn.x == 0) {
+                if (
+                    unicorn.panel % 4 > 0 &&
+                    terminal[2] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel - 1]][3]
+                ) {
+                    unicorn.panel--;
+                    unicorn.x = 64;
+                } else {
+                    unicorn.direction = 'E';
+                }
+            } else {
+                unicorn.direction = terminal[0] !== undefined ? 'N' : 'S';
+            }
+        }
+    }
+    if (unicorn.direction == 'E') {
+        unicorn.lr = 'R';
+        if (unicorn.x < 32) {
+            unicorn.x++;
+        } else if (unicorn.x < 64 && terminal[3] !== undefined) {
+            unicorn.x++;
+        } else {
+            if (unicorn.x == 64) {
+                if (
+                    unicorn.panel % 4 < 3 &&
+                    terminal[3] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel + 1]][2]
+                ) {
+                    unicorn.panel++;
+                    unicorn.x = 0;
+                } else {
+                    unicorn.direction = 'W';
+                }
+            } else {
+                unicorn.direction = terminal[0] !== undefined ? 'N' : 'S';
+            }
+        }
+    }
+};
 
-    oscSpCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    SPR =
-        unicorn.lr == 'R'
-            ? counter % 2 == 0
-                ? [...sprUnicornR0]
-                : [...sprUnicornR1]
-            : counter % 2 == 0
-              ? [...sprUnicornL0]
-              : [...sprUnicornL1];
-    const xOffset = unicorn.x + (unicorn.panel % 4) * 64 - 16;
-    const yOffset = unicorn.y + (unicorn.panel >> 2) * 48 - 24;
-    // document.querySelector('#debug').innerHTML = 'xOffset: ' + xOffset + ', yOffset: ' + yOffset;
-    //0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority
-    SPR.map((s) => [s[0], s[1], s[2] + xOffset, s[3] + yOffset, s[4], s[5], s[6]])
-        .filter((chr) => chr[6] === 0 || chr[6] === undefined)
-        .forEach((chr) => drawChr(chr, oscSpCtx));
+let lastTime = 0;
+const main = (timestamp) => {
+    const counter = Math.floor(timestamp / 250);
+    // document.querySelector('#debug').innerHTML = counter + ': ' + (counter % 2);
 
-    canvasRenderingCtx.drawImage(oscBg, 0, 0);
-    canvasRenderingCtx.drawImage(oscSp, 0, 0);
+    if (timestamp - lastTime > 32) {
+        lastTime = timestamp;
 
+        unicornMove();
+
+        // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
+        let SPR = counter % 4 == 0 ? [...sprStar0] : [...sprStar1];
+
+        oscSp1Ctx.fillStyle = lch(bgColor);
+        oscSp1Ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        oscSp0Ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        const sprUnicorn =
+            unicorn.lr == 'R'
+                ? counter % 2 == 0
+                    ? [...sprUnicornR0]
+                    : [...sprUnicornR1]
+                : counter % 2 == 0
+                  ? [...sprUnicornL0]
+                  : [...sprUnicornL1];
+        const xOffset = unicorn.x + (unicorn.panel % 4) * 64 - 16;
+        const yOffset = unicorn.y + (unicorn.panel >> 2) * 48 - 24;
+        sprUnicorn.forEach((s) =>
+            SPR.push([s[0], s[1], s[2] + xOffset, s[3] + yOffset, s[4], s[5], s[6]]),
+        );
+
+        //0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority
+        SPR.filter((chr) => chr[6] === 0 || chr[6] === undefined).forEach((chr) =>
+            drawChr(chr, oscSp0Ctx),
+        );
+        SPR.filter((chr) => chr[6] === 1).forEach((chr) => drawChr(chr, oscSp1Ctx));
+
+        canvasRenderingCtx.drawImage(oscSp1, 0, 0);
+        canvasRenderingCtx.drawImage(oscBg, 0, 0);
+        canvasRenderingCtx.drawImage(oscSp0, 0, 0);
+    }
     requestAnimationFrame(main);
 };
 main();
