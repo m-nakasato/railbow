@@ -767,16 +767,14 @@ function shuffle(array) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
-    return array;
+    if (array[15] > 7) shuffle(array);
 }
 
-PANEL_MAP = shuffle(PANEL_MAP);
+shuffle(PANEL_MAP);
 // console.log(PANEL_MAP);
 
-// PANEL_MAP[15] じゃなく、角のパネル以外のどれかランダムにしたい
-//ゴールのパネルを作る？
-let removalMapId = 15;
-const REMOVAL_PID = PANEL_MAP[removalMapId];
+let REMOVAL_MAP_ID = 15;
+const REMOVAL_PID = PANEL_MAP[REMOVAL_MAP_ID];
 PANEL[REMOVAL_PID] = [];
 PANEL_TERMINAL[REMOVAL_PID] = [];
 
@@ -856,8 +854,20 @@ let BG0 = setBg();
 
 // 1: star
 const item = Array(16);
-item[1] = 1;
-item[4] = 1;
+item[PANEL_MAP[1]] = 1;
+item[PANEL_MAP[2]] = 1;
+item[PANEL_MAP[3]] = 1;
+item[PANEL_MAP[4]] = 1;
+item[PANEL_MAP[5]] = 1;
+item[PANEL_MAP[6]] = 1;
+item[PANEL_MAP[7]] = 1;
+item[PANEL_MAP[8]] = 1;
+item[PANEL_MAP[9]] = 1;
+item[PANEL_MAP[10]] = 1;
+item[PANEL_MAP[11]] = 1;
+item[PANEL_MAP[12]] = 1;
+item[PANEL_MAP[13]] = 1;
+item[PANEL_MAP[14]] = 1;
 
 const SCALE = 3;
 // const SCALE = 2;
@@ -865,7 +875,8 @@ let bgColor = '32';
 const CANVAS = document.querySelector('#s canvas');
 const canvasRenderingCtx = CANVAS.getContext('2d');
 const CANVAS_WIDTH = 256 * SCALE; //256, 160
-const CANVAS_HEIGHT = 192 * SCALE; //240, 192, 144, 120
+// const CANVAS_HEIGHT = 192 * SCALE; //240, 192, 144, 120
+const CANVAS_HEIGHT = 224 * SCALE; //240, 192, 144, 120
 CANVAS.width = CANVAS_WIDTH;
 CANVAS.height = CANVAS_HEIGHT;
 canvasRenderingCtx.imageSmoothingEnabled = false;
@@ -1050,16 +1061,20 @@ CANVAS.onclick = (e) => {
     const rect = e.target.getBoundingClientRect();
     const clickX = e.clientX - Math.floor(rect.left);
     const clickY = e.clientY - Math.floor(rect.top);
-    const blockW = e.target.width / 4;
-    const blockH = e.target.height / 4;
+    // const blockW = e.target.width / 4;
+    // const blockH = e.target.height / 4;
+    const blockW = 64 * SCALE;
+    const blockH = 48 * SCALE;
     const clickCol = Math.floor(clickX / blockW);
     const clickRow = Math.floor(clickY / blockH);
     const clickMapId = clickRow * 4 + clickCol;
-    const removalCol = removalMapId % 4;
-    const removalRow = removalMapId >> 2;
+    const removalCol = REMOVAL_MAP_ID % 4;
+    const removalRow = REMOVAL_MAP_ID >> 2;
 
     const unicornCol = unicorn.panel % 4;
     const unicornRow = unicorn.panel >> 2;
+
+    if (clickRow > 3) return;
 
     // vertical slide
     if (clickCol == removalCol) {
@@ -1068,7 +1083,7 @@ CANVAS.onclick = (e) => {
             for (let i = removalRow + 1; i <= clickRow; i++) {
                 PANEL_MAP[(i - 1) * 4 + clickCol] = PANEL_MAP[i * 4 + clickCol];
             }
-            removalMapId = clickMapId;
+            REMOVAL_MAP_ID = clickMapId;
             if (unicornCol == clickCol && unicornRow > removalRow && unicornRow <= clickRow)
                 unicorn.panel = unicorn.panel - 4;
         }
@@ -1077,7 +1092,7 @@ CANVAS.onclick = (e) => {
             for (let i = removalRow - 1; i >= clickRow; i--) {
                 PANEL_MAP[(i + 1) * 4 + clickCol] = PANEL_MAP[i * 4 + clickCol];
             }
-            removalMapId = clickMapId;
+            REMOVAL_MAP_ID = clickMapId;
             if (unicornCol == clickCol && unicornRow < removalRow && unicornRow >= clickRow)
                 unicorn.panel = unicorn.panel + 4;
         }
@@ -1089,7 +1104,7 @@ CANVAS.onclick = (e) => {
             for (let i = removalCol + 1; i <= clickCol; i++) {
                 PANEL_MAP[clickRow * 4 + i - 1] = PANEL_MAP[clickRow * 4 + i];
             }
-            removalMapId = clickMapId;
+            REMOVAL_MAP_ID = clickMapId;
             if (unicornRow == clickRow && unicornCol > removalCol && unicornCol <= clickCol)
                 unicorn.panel = unicorn.panel - 1;
         }
@@ -1098,12 +1113,12 @@ CANVAS.onclick = (e) => {
             for (let i = removalCol - 1; i >= clickCol; i--) {
                 PANEL_MAP[clickRow * 4 + i + 1] = PANEL_MAP[clickRow * 4 + i];
             }
-            removalMapId = clickMapId;
+            REMOVAL_MAP_ID = clickMapId;
             if (unicornRow == clickRow && unicornCol < removalCol && unicornCol >= clickCol)
                 unicorn.panel = unicorn.panel + 1;
         }
     }
-    PANEL_MAP[removalMapId] = REMOVAL_PID;
+    PANEL_MAP[REMOVAL_MAP_ID] = REMOVAL_PID;
     // console.log('clickMapId: ' + clickMapId, 'removalMapId: ' + removalMapId);
     BG0 = setBg();
 
