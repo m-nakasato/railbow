@@ -573,6 +573,11 @@ const setBg = () =>
 let BG0 = setBg();
 // console.log(BG0);
 
+// 1: star
+const item = Array(16);
+item[1] = 1;
+item[4] = 1;
+
 const SCALE = 3;
 // const SCALE = 2;
 let bgColor = '32';
@@ -713,7 +718,20 @@ const main = (timestamp) => {
         unicornMove();
 
         // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
-        let SPR = counter % 4 == 0 ? [...sprStar0] : [...sprStar1];
+        // let SPR = counter % 4 == 0 ? [...sprStar0] : [...sprStar1];
+        const SPR = [];
+        item.forEach((i, pid) => {
+            if (i === undefined) return;
+            if (i == 1) {
+                const mapID = PANEL_MAP.findIndex((m) => m == pid);
+                const xOffset = (mapID % 4) * 64;
+                const yOffset = (mapID >> 2) * 48;
+                const sprStar = counter % 4 == 0 ? [...sprStar0] : [...sprStar1];
+                sprStar.forEach((s) =>
+                    SPR.push([s[0], s[1], s[2] + xOffset, s[3] + yOffset, s[4], s[5], s[6]]),
+                );
+            }
+        });
 
         oscSp1Ctx.fillStyle = lch(bgColor);
         oscSp1Ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
