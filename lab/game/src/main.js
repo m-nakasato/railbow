@@ -149,6 +149,27 @@ const CHR = (
     'VZqlawlbApYAKwALCAugCw' + //  37: unicorn 3 head 3 sad
     '//7/+f/5/+X/5aqVlVXlZQ' + //  38: star 0
     '+CD+AP4A+AL4K+K/6////w' + //  39: star 1
+    'qqqqqqqqqqqqqqqqqqqqqg' + //  40: status bg
+    '///8P/PPz/PP88/zz/PP8w' + //  41: chr 0 t
+    'z/PP88/zz/PP8/PP/D///w' + //  42: chr 0 b
+    '////P/w/8z//P/8//z//Pw' + //  43: chr 1 t
+    '/z//P/8//z//P/8/8AP//w' + //  44: chr 1 b
+    '///8P/PPz/PP8//z//P/8w' + //  45: chr 2 t
+    '/8//z/8//P/z/8//wAP//w' + //  46: chr 2 b
+    '///8P/PPz/PP8//z/8/8Pw' + //  47: chr 3 t
+    '/8//8//zz/PP8/PP/D///w' + //  48: chr 3 b
+    '////z//P/w//D/zP/M/zzw' + //  49: chr 4 t
+    '88/Pz8AD/8//z//P/8///w' + //  50: chr 4 b
+    '///AA8//z//P/8//zD/Dzw' + //  51: chr 5 t
+    '//P/8//zz/PP8/PP/D///w' + //  52: chr 5 b
+    '///8P/PPz/PP88//zD/Dzw' + //  53: chr 6 t
+    'z/PP88/zz/PP8/PP/D///w' + //  54: chr 6 b
+    '///AA8/zz/P/z//P/8//Pw' + //  55: chr 7 t
+    '/z//P/z//P/8//P/8////w' + //  56: chr 7 b
+    '///8P/PPz/PP88/z88/8Pw' + //  57: chr 8 t
+    '88/P88/zz/PP8/PP/D///w' + //  58: chr 8 b
+    '///8P/PPz/PP88/zz/Pzww' + //  59: chr 9 t
+    '/DP/8//zz/PP8/PP/D///w' + //  60: chr 9 b
     ''
 )
     .match(/.{22}/g)
@@ -156,18 +177,19 @@ const CHR = (
 
 const PLT = [
     '321030', //  0: cloud
-    '262824', //  1: rainbow red yellow purple
-    '2a2c22', //  2: rainbow green blue violet
-    '26282a', //  3: rainbow red yellow green
-    '282a2c', //  4: rainbow yellow green blue
-    '282624', //  5: rainbow yellow red purple
-    '2c2a22', //  6: rainbow blue green violet
-    '2c2a28', //  7: rainbow blue green yellow
-    '2a2826', //  8: rainbow green yellow red
+    '273824', //  1: rainbow orange yellow purple
+    '292c22', //  2: rainbow green  blue   violet
+    '273829', //  3: rainbow orange yellow green
+    '38292c', //  4: rainbow yellow green  blue
+    '382724', //  5: rainbow yellow orange purple
+    '2c2922', //  6: rainbow blue   green  violet
+    '2c2938', //  7: rainbow blue   green  yellow
+    '293827', //  8: rainbow green  yellow orange
     '382300', //  9: unicorn 0
     '202300', // 10: unicorn 1
     '382000', // 11: star 0
     '383800', // 12: star 1
+    '38381d', // 13: status
 ].map((p) => p.match(/.{2}/g));
 
 const sprStar0 = [
@@ -497,8 +519,8 @@ const REMOVAL_PID = PANEL_MAP[REMOVAL_MAP_ID];
 PANEL[REMOVAL_PID] = [];
 PANEL_TERMINAL[REMOVAL_PID] = [];
 
-const setBg = () =>
-    PANEL_MAP.flatMap((pid, order) => {
+const setBg = () => {
+    const bg = PANEL_MAP.flatMap((pid, order) => {
         const column = order % 4,
             row = order >> 2;
         const chrSet = [...PANEL[pid]];
@@ -568,11 +590,18 @@ const setBg = () =>
             ),
         );
     });
+    // status
+    for (let i = 0; i < 128; i++) {
+        // bg.push([40, 9, (i % 32) * 8, 192 + Math.floor(i / 32) * 8]);
+        bg.push([40, 13, (i % 32) * 8, 192 + Math.floor(i / 32) * 8]);
+    }
+    return bg;
+};
 let BG0 = setBg();
 // console.log(BG0);
 
-// 1: star
-const item = Array(16);
+// 1: star (14)
+let item = Array(16);
 item[PANEL_MAP[1]] = 1;
 item[PANEL_MAP[2]] = 1;
 item[PANEL_MAP[3]] = 1;
@@ -626,47 +655,64 @@ const drawBG = () => {
 };
 drawBG();
 
-const unicorn = { panel: 0, x: 32, y: 24, direction: 'N', lr: 'R' };
+// face { '': 26, 'happy': 36, 'sad': 37 }
+const unicorn = { panel: 0, x: 32, y: 24, direction: 'N', lr: 'R', face: '' };
+
+function getItem() {
+    const targetPid = PANEL_MAP[unicorn.panel];
+    if (item[targetPid] === undefined) return;
+    if (unicorn.direction == 'N' || unicorn.direction == 'S') {
+        if (unicorn.y == 24) {
+            item[targetPid] = undefined;
+            unicorn.face = 'happy';
+        }
+    } else {
+        if (unicorn.x == 32) {
+            item[targetPid] = undefined;
+            unicorn.face = 'happy';
+        }
+    }
+}
 
 const unicornMove = () => {
     const terminal = PANEL_TERMINAL[PANEL_MAP[unicorn.panel]];
     if (unicorn.direction == 'N') {
-        if (unicorn.y > 24) {
-            unicorn.y--;
-        } else if (unicorn.y > 0 && terminal[0] !== undefined) {
+        if (unicorn.y > 24 || (unicorn.y > 1 && terminal[0] !== undefined)) {
             unicorn.y--;
         } else {
-            if (unicorn.y == 0) {
+            if (unicorn.y == 1) {
                 if (
                     unicorn.panel >> 2 > 0 &&
                     terminal[0] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel - 4]][1]
                 ) {
                     unicorn.panel -= 4;
                     unicorn.y = 48;
+                    // unicorn.y = 47;
                 } else {
                     unicorn.direction = 'S';
                 }
+                unicorn.face = '';
             } else {
                 unicorn.direction = terminal[2] !== undefined ? 'W' : 'E';
             }
         }
     }
     if (unicorn.direction == 'S') {
-        if (unicorn.y < 24) {
-            unicorn.y++;
-        } else if (unicorn.y < 48 && terminal[1] !== undefined) {
+        if (unicorn.y < 24 || (unicorn.y < 47 && terminal[1] !== undefined)) {
             unicorn.y++;
         } else {
-            if (unicorn.y == 48) {
+            if (unicorn.y == 47) {
                 if (
                     unicorn.panel >> 2 < 3 &&
                     terminal[1] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel + 4]][0]
                 ) {
                     unicorn.panel += 4;
                     unicorn.y = 0;
+                    // unicorn.y = 1;
                 } else {
                     unicorn.direction = 'N';
                 }
+                unicorn.face = '';
             } else {
                 unicorn.direction = terminal[2] !== undefined ? 'W' : 'E';
             }
@@ -674,21 +720,21 @@ const unicornMove = () => {
     }
     if (unicorn.direction == 'W') {
         unicorn.lr = 'L';
-        if (unicorn.x > 32) {
-            unicorn.x--;
-        } else if (unicorn.x > 0 && terminal[2] !== undefined) {
+        if (unicorn.x > 32 || (unicorn.x > 1 && terminal[2] !== undefined)) {
             unicorn.x--;
         } else {
-            if (unicorn.x == 0) {
+            if (unicorn.x == 1) {
                 if (
                     unicorn.panel % 4 > 0 &&
                     terminal[2] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel - 1]][3]
                 ) {
                     unicorn.panel--;
                     unicorn.x = 64;
+                    // unicorn.x = 63;
                 } else {
                     unicorn.direction = 'E';
                 }
+                unicorn.face = '';
             } else {
                 unicorn.direction = terminal[0] !== undefined ? 'N' : 'S';
             }
@@ -696,21 +742,21 @@ const unicornMove = () => {
     }
     if (unicorn.direction == 'E') {
         unicorn.lr = 'R';
-        if (unicorn.x < 32) {
-            unicorn.x++;
-        } else if (unicorn.x < 64 && terminal[3] !== undefined) {
+        if (unicorn.x < 32 || (unicorn.x < 63 && terminal[3] !== undefined)) {
             unicorn.x++;
         } else {
-            if (unicorn.x == 64) {
+            if (unicorn.x == 63) {
                 if (
                     unicorn.panel % 4 < 3 &&
                     terminal[3] == PANEL_TERMINAL[PANEL_MAP[unicorn.panel + 1]][2]
                 ) {
                     unicorn.panel++;
                     unicorn.x = 0;
+                    // unicorn.x = 1;
                 } else {
                     unicorn.direction = 'W';
                 }
+                unicorn.face = '';
             } else {
                 unicorn.direction = terminal[0] !== undefined ? 'N' : 'S';
             }
@@ -727,6 +773,9 @@ const main = (timestamp) => {
         lastTime = timestamp;
 
         unicornMove();
+        getItem();
+
+        document.querySelector('#debug').innerHTML = 14 - item.filter((i) => i).length;
 
         // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
         // let SPR = counter % 4 == 0 ? [...sprStar0] : [...sprStar1];
@@ -744,6 +793,29 @@ const main = (timestamp) => {
             }
         });
 
+        // status
+        sprStar1.forEach((s) => SPR.push([s[0], s[1], s[2] - 16, s[3] + 184, s[4]]));
+        SPR.push([41, 13, 24, 200]);
+        SPR.push([42, 13, 24, 208]);
+        SPR.push([43, 13, 32, 200]);
+        SPR.push([44, 13, 32, 208]);
+        SPR.push([45, 13, 40, 200]);
+        SPR.push([46, 13, 40, 208]);
+        SPR.push([47, 13, 48, 200]);
+        SPR.push([48, 13, 48, 208]);
+        SPR.push([49, 13, 56, 200]);
+        SPR.push([50, 13, 56, 208]);
+        SPR.push([51, 13, 64, 200]);
+        SPR.push([52, 13, 64, 208]);
+        SPR.push([53, 13, 72, 200]);
+        SPR.push([54, 13, 72, 208]);
+        SPR.push([55, 13, 80, 200]);
+        SPR.push([56, 13, 80, 208]);
+        SPR.push([57, 13, 88, 200]);
+        SPR.push([58, 13, 88, 208]);
+        SPR.push([59, 13, 96, 200]);
+        SPR.push([60, 13, 96, 208]);
+
         oscSp1Ctx.fillStyle = lch(bgColor);
         oscSp1Ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         oscSp0Ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -758,6 +830,7 @@ const main = (timestamp) => {
                   : [...sprUnicornL1];
         const xOffset = unicorn.x + (unicorn.panel % 4) * 64 - 16;
         const yOffset = unicorn.y + (unicorn.panel >> 2) * 48 - 24;
+        sprUnicorn[3][0] = unicorn.face == 'happy' ? 36 : unicorn.face == 'sad' ? 37 : 26;
         sprUnicorn.forEach((s) =>
             SPR.push([s[0], s[1], s[2] + xOffset, s[3] + yOffset, s[4], s[5], s[6]]),
         );
