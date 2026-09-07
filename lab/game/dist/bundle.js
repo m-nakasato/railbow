@@ -289,6 +289,9 @@ const loop = (synthesizers, playbackData, kms) => {
     );
 };
 
+// 0: demo, 1: game, 2: clear
+let mode = 0;
+
 const kms = {
     bpm: 100,
     value: '16',
@@ -431,26 +434,39 @@ const CHR = (
     '//7/+f/5/+X/5aqVlVXlZQ' + //  38: star 0
     '+CD+AP4A+AL4K+K/6////w' + //  39: star 1
     'qqqqqqqqqqqqqqqqqqqqqg' + //  40: status bg
-    '///8P/PPz/PP88/zz/PP8w' + //  41: chr 0 t
-    'z/PP88/zz/PP8/PP/D///w' + //  42: chr 0 b
-    '////P/w/8z//P/8//z//Pw' + //  43: chr 1 t
-    '/z//P/8//z//P/8/8AP//w' + //  44: chr 1 b
-    '///8P/PPz/PP8//z//P/8w' + //  45: chr 2 t
-    '/8//z/8//P/z/8//wAP//w' + //  46: chr 2 b
-    '///8P/PPz/PP8//z/8/8Pw' + //  47: chr 3 t
-    '/8//8//zz/PP8/PP/D///w' + //  48: chr 3 b
-    '////z//P/w//D/zP/M/zzw' + //  49: chr 4 t
-    '88/Pz8AD/8//z//P/8///w' + //  50: chr 4 b
-    '///AA8//z//P/8//zD/Dzw' + //  51: chr 5 t
-    '//P/8//zz/PP8/PP/D///w' + //  52: chr 5 b
-    '///8P/PPz/PP88//zD/Dzw' + //  53: chr 6 t
-    'z/PP88/zz/PP8/PP/D///w' + //  54: chr 6 b
-    '///AA8/zz/P/z//P/8//Pw' + //  55: chr 7 t
-    '/z//P/z//P/8//P/8////w' + //  56: chr 7 b
-    '///8P/PPz/PP88/z88/8Pw' + //  57: chr 8 t
-    '88/P88/zz/PP8/PP/D///w' + //  58: chr 8 b
-    '///8P/PPz/PP88/zz/Pzww' + //  59: chr 9 t
-    '/DP/8//zz/PP8/PP/D///w' + //  60: chr 9 b
+    '//////w/88/P88/zz/PP8w' + //  41: chr 0t
+    'z/PP88/zz/Pzz/w//////w' + //  42: chr 0b
+    '//////8//D/zP/8//z//Pw' + //  43: chr 1t
+    '/z//P/8//z//P/AD/////w' + //  44: chr 1b
+    '//////w/88/P88/z//P/8w' + //  45: chr 2t, 5b
+    '/8//P/z/8//P/8AD/////w' + //  46: chr 2b
+    '//////w/88/P88/z/8/8Pw' + //  47: chr 3t
+    '/8//88/zz/Pzz/w//////w' + //  48: chr 3b
+    '///////P/8//D/8P/M/8zw' + //  49: chr 4t
+    '88/zz8/PwAP/z//P/////w' + //  50: chr 4b
+    '/////8ADz//P/8//zD/Dzw' + //  51: chr 5t
+    '//////w/88/P88/zz//MPw' + //  52: chr 6t, 9b
+    'w8/P88/zz/Pzz/w//////w' + //  53: chr 6b, 9t
+    '/////8ADz/PP8//P/8//zw' + //  54: chr 7t
+    '/z//P/8//P/8//z//////w' + //  55: chr 7b
+    '//////w/88/P88/z88/8Pw' + //  56: chr 8t
+    '88/P88/zz/Pzz/w//////w' + //  57: chr 8b
+    '////////z/PP8/PP88/8Pw' + //  58: chr x
+    '///////z//P/z//P/z//Pw' + //  59: chr /
+    '//////qv5VuUVpFVkVWVVQ' + //  60: heart t
+    '5VXlVflV/lX/lf/l//n//g' + //  61: heart b
+    '/////+qqllmWWZZZllmWWQ' + //  62: energy l 2.5 / 0.0
+    '/////+qqglmCWYJZglmCWQ' + //  63: energy l 1.5 / 1.0
+    '/////+qqggmCCYIJggmCCQ' + //  64: energy l 0.5 / 2.0
+    '/////6qqZZZllmWWZZZllg' + //  65: energy r 2.5 / 0.0
+    '/////6qqJZYlliWWJZYllg' + //  66: energy r 2.0 / 0.5
+    '/////6qqIJYgliCWIJYglg' + //  67: energy r 1.0 / 1.5
+    '//v/4v/i/+L/4v/i/+L/4g' + //  68: pointer 0
+    '//////////+//yv/Ir8iLw' + //  69: pointer 1
+    '+uDgoPgA/gD/gP+A/+D/+g' + //  70: pointer 2
+    'Ai8ALwAvAC8ALwC/Av+r/w' + //  71: pointer 3
+    '//f/f//7/eL/4v/i/+L/4g' + //  72: pointer 0
+    '//9/////3/+//yv/Ir8iLw' + //  73: pointer 1
     ''
 )
     .match(/.{22}/g)
@@ -470,8 +486,191 @@ const PLT = [
     '202300', // 10: unicorn 1
     '382000', // 11: star 0
     '383800', // 12: star 1
-    '38381d', // 13: status
+    '30381d', // 13: status
+    '302500', // 14: heart 0
+    '252500', // 15: heart 1
+    '302500', // 16: energy 0
+    '253000', // 17: energy 0
+    '36151d', // 18: energy 0
 ].map((p) => p.match(/.{2}/g));
+
+const pointer = [
+    [
+        [68, 18, 0, 0],
+        [69, 18, 8, 0],
+        [70, 18, 0, 8],
+        [71, 18, 8, 8],
+    ],
+    [
+        [72, 18, 0, 0],
+        [73, 18, 8, 0],
+        [70, 18, 0, 8],
+        [71, 18, 8, 8],
+    ],
+];
+
+const energy = [
+    [
+        [62, 17, 88, 200],
+        [65, 17, 96, 200],
+        [62, 17, 88, 208, , 1],
+        [65, 17, 96, 208, , 1],
+        [65, 17, 103, 200, 1],
+        [62, 17, 111, 200, 1],
+        [65, 17, 103, 208, 1, 1],
+        [62, 17, 111, 208, 1, 1],
+    ],
+    [
+        [62, 17, 88, 200],
+        [65, 17, 96, 200],
+        [62, 17, 88, 208, , 1],
+        [65, 17, 96, 208, , 1],
+        [65, 17, 103, 200, 1],
+        [63, 17, 111, 200, 1],
+        [65, 17, 103, 208, 1, 1],
+        [63, 17, 111, 208, 1, 1],
+    ],
+    [
+        [62, 17, 88, 200],
+        [65, 17, 96, 200],
+        [62, 17, 88, 208, , 1],
+        [65, 17, 96, 208, , 1],
+        [65, 17, 103, 200, 1],
+        [64, 17, 111, 200, 1],
+        [65, 17, 103, 208, 1, 1],
+        [64, 17, 111, 208, 1, 1],
+    ],
+    [
+        [62, 17, 88, 200],
+        [65, 17, 96, 200],
+        [62, 17, 88, 208, , 1],
+        [65, 17, 96, 208, , 1],
+        [66, 17, 103, 200, 1],
+        [62, 16, 111, 200, 1],
+        [66, 17, 103, 208, 1, 1],
+        [62, 16, 111, 208, 1, 1],
+    ],
+    [
+        [62, 17, 88, 200],
+        [65, 17, 96, 200],
+        [62, 17, 88, 208, , 1],
+        [65, 17, 96, 208, , 1],
+        [67, 17, 103, 200, 1],
+        [62, 16, 111, 200, 1],
+        [67, 17, 103, 208, 1, 1],
+        [62, 16, 111, 208, 1, 1],
+    ],
+    [
+        [62, 17, 88, 200],
+        [65, 17, 96, 200],
+        [62, 17, 88, 208, , 1],
+        [65, 17, 96, 208, , 1],
+        [65, 16, 103, 200, 1],
+        [62, 16, 111, 200, 1],
+        [65, 16, 103, 208, 1, 1],
+        [62, 16, 111, 208, 1, 1],
+    ],
+    [
+        [62, 17, 88, 200],
+        [67, 16, 96, 200],
+        [62, 17, 88, 208, , 1],
+        [67, 16, 96, 208, , 1],
+        [65, 16, 103, 200, 1],
+        [62, 16, 111, 200, 1],
+        [65, 16, 103, 208, 1, 1],
+        [62, 16, 111, 208, 1, 1],
+    ],
+    [
+        [62, 17, 88, 200],
+        [66, 16, 96, 200],
+        [62, 17, 88, 208, , 1],
+        [66, 16, 96, 208, , 1],
+        [65, 16, 103, 200, 1],
+        [62, 16, 111, 200, 1],
+        [65, 16, 103, 208, 1, 1],
+        [62, 16, 111, 208, 1, 1],
+    ],
+    [
+        [64, 16, 88, 200],
+        [65, 16, 96, 200],
+        [64, 16, 88, 208, , 1],
+        [65, 16, 96, 208, , 1],
+        [65, 16, 103, 200, 1],
+        [62, 16, 111, 200, 1],
+        [65, 16, 103, 208, 1, 1],
+        [62, 16, 111, 208, 1, 1],
+    ],
+    [
+        [63, 16, 88, 200],
+        [65, 16, 96, 200],
+        [63, 16, 88, 208, , 1],
+        [65, 16, 96, 208, , 1],
+        [65, 16, 103, 200, 1],
+        [62, 16, 111, 200, 1],
+        [65, 16, 103, 208, 1, 1],
+        [62, 16, 111, 208, 1, 1],
+    ],
+    [
+        [62, 16, 88, 200],
+        [65, 16, 96, 200],
+        [62, 16, 88, 208, , 1],
+        [65, 16, 96, 208, , 1],
+        [65, 16, 103, 200, 1],
+        [62, 16, 111, 200, 1],
+        [65, 16, 103, 208, 1, 1],
+        [62, 16, 111, 208, 1, 1],
+    ],
+];
+
+const sprHeart = [
+    [60, 14, 24, 16],
+    [61, 14, 24, 24],
+    [60, 15, 31, 16, 1],
+    [61, 15, 31, 24, 1],
+];
+
+const sprNumber = [
+    [
+        [41, 13, 0, 0],
+        [42, 13, 0, 8],
+    ],
+    [
+        [43, 13, 0, 0],
+        [44, 13, 0, 8],
+    ],
+    [
+        [45, 13, 0, 0],
+        [46, 13, 0, 8],
+    ],
+    [
+        [47, 13, 0, 0],
+        [48, 13, 0, 8],
+    ],
+    [
+        [49, 13, 0, 0],
+        [50, 13, 0, 8],
+    ],
+    [
+        [51, 13, 0, 0],
+        [45, 13, 0, 8, , 1],
+    ],
+    [
+        [52, 13, 0, 0],
+        [53, 13, 0, 8],
+    ],
+    [
+        [54, 13, 0, 0],
+        [55, 13, 0, 8],
+    ],
+    [
+        [56, 13, 0, 0],
+        [57, 13, 0, 8],
+    ],
+    [
+        [53, 13, 0, 0, 1, 1],
+        [52, 13, 0, 8, 1, 1],
+    ],
+];
 
 const sprStar0 = [
     [38, 11, 24, 16],
@@ -525,241 +724,245 @@ sprUnicornL1[10] = [35, 10, 16, 24, 1];
 
 // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
 // const PANEL = [...Array(16)].map(() => JSON.parse(JSON.stringify(PANEL_TEMPLATE)));
-const PANEL = [...Array(16)].map(() => Array());
+let PANEL;
 
-for (let i = 0; i < 8; i++) {
-    PANEL[0].push([6, 1, 8 * i, 8]);
-    PANEL[0].push([7, 1, 8 * i, 16]);
-    PANEL[0].push([7, 2, 8 * i, 24]);
-    PANEL[0].push([6, 2, 8 * i, 32, , 1]);
-    PANEL[2].push([6, 2, 8 * i, 8]);
-    PANEL[2].push([7, 2, 8 * i, 16, , 1]);
-    PANEL[2].push([7, 1, 8 * i, 24, , 1]);
-    PANEL[2].push([6, 1, 8 * i, 32, , 1]);
-}
-for (let i = 0; i < 6; i++) {
-    PANEL[4].push([8, 1, 16, 8 * i]);
-    PANEL[4].push([9, 1, 24, 8 * i]);
-    PANEL[4].push([9, 2, 32, 8 * i]);
-    PANEL[4].push([8, 2, 40, 8 * i, 1]);
-    PANEL[6].push([8, 2, 16, 8 * i]);
-    PANEL[6].push([9, 2, 24, 8 * i, 1]);
-    PANEL[6].push([9, 1, 32, 8 * i, 1]);
-    PANEL[6].push([8, 1, 40, 8 * i, 1]);
-}
+const panelReset = () => {
+    PANEL = [...Array(16)].map(() => Array());
+    for (let i = 0; i < 8; i++) {
+        PANEL[0].push([6, 1, 8 * i, 8]);
+        PANEL[0].push([7, 1, 8 * i, 16]);
+        PANEL[0].push([7, 2, 8 * i, 24]);
+        PANEL[0].push([6, 2, 8 * i, 32, , 1]);
+        PANEL[2].push([6, 2, 8 * i, 8]);
+        PANEL[2].push([7, 2, 8 * i, 16, , 1]);
+        PANEL[2].push([7, 1, 8 * i, 24, , 1]);
+        PANEL[2].push([6, 1, 8 * i, 32, , 1]);
+    }
+    for (let i = 0; i < 6; i++) {
+        PANEL[4].push([8, 1, 16, 8 * i]);
+        PANEL[4].push([9, 1, 24, 8 * i]);
+        PANEL[4].push([9, 2, 32, 8 * i]);
+        PANEL[4].push([8, 2, 40, 8 * i, 1]);
+        PANEL[6].push([8, 2, 16, 8 * i]);
+        PANEL[6].push([9, 2, 24, 8 * i, 1]);
+        PANEL[6].push([9, 1, 32, 8 * i, 1]);
+        PANEL[6].push([8, 1, 40, 8 * i, 1]);
+    }
 
-PANEL[1] = JSON.parse(JSON.stringify(PANEL[0]));
-PANEL[3] = JSON.parse(JSON.stringify(PANEL[2]));
-PANEL[5] = JSON.parse(JSON.stringify(PANEL[4]));
-PANEL[7] = JSON.parse(JSON.stringify(PANEL[6]));
+    PANEL[1] = JSON.parse(JSON.stringify(PANEL[0]));
+    PANEL[3] = JSON.parse(JSON.stringify(PANEL[2]));
+    PANEL[5] = JSON.parse(JSON.stringify(PANEL[4]));
+    PANEL[7] = JSON.parse(JSON.stringify(PANEL[6]));
 
-PANEL[8].push([6, 5, 56, 8]);
-PANEL[8].push([7, 5, 56, 16, , 1]);
-PANEL[8].push([7, 6, 56, 24, , 1]);
-PANEL[8].push([6, 6, 56, 32, , 1]);
-PANEL[8].push([6, 5, 48, 8]);
-PANEL[8].push([7, 5, 48, 16, , 1]);
-PANEL[8].push([7, 6, 48, 24, , 1]);
-PANEL[8].push([6, 6, 48, 32, , 1]);
-PANEL[8].push([10, 5, 40, 8, 1]);
-PANEL[8].push([11, 5, 32, 8, 1]);
-PANEL[8].push([12, 5, 40, 16, 1]);
-PANEL[8].push([13, 5, 32, 16, 1]);
-PANEL[8].push([14, 5, 24, 16, 1]);
-PANEL[8].push([15, 7, 40, 24, 1]);
-PANEL[8].push([16, 8, 32, 24, 1]);
-PANEL[8].push([17, 5, 24, 24, 1]);
-PANEL[8].push([18, 5, 16, 24, 1]);
-PANEL[8].push([19, 6, 40, 32, 1]);
-PANEL[8].push([20, 7, 32, 32, 1]);
-PANEL[8].push([21, 5, 24, 32, 1]);
-PANEL[8].push([22, 5, 16, 32, 1]);
-PANEL[8].push([8, 1, 16, 40]);
-PANEL[8].push([9, 1, 24, 40]);
-PANEL[8].push([9, 2, 32, 40]);
-PANEL[8].push([8, 2, 40, 40, 1]);
+    PANEL[8].push([6, 5, 56, 8]);
+    PANEL[8].push([7, 5, 56, 16, , 1]);
+    PANEL[8].push([7, 6, 56, 24, , 1]);
+    PANEL[8].push([6, 6, 56, 32, , 1]);
+    PANEL[8].push([6, 5, 48, 8]);
+    PANEL[8].push([7, 5, 48, 16, , 1]);
+    PANEL[8].push([7, 6, 48, 24, , 1]);
+    PANEL[8].push([6, 6, 48, 32, , 1]);
+    PANEL[8].push([10, 5, 40, 8, 1]);
+    PANEL[8].push([11, 5, 32, 8, 1]);
+    PANEL[8].push([12, 5, 40, 16, 1]);
+    PANEL[8].push([13, 5, 32, 16, 1]);
+    PANEL[8].push([14, 5, 24, 16, 1]);
+    PANEL[8].push([15, 7, 40, 24, 1]);
+    PANEL[8].push([16, 8, 32, 24, 1]);
+    PANEL[8].push([17, 5, 24, 24, 1]);
+    PANEL[8].push([18, 5, 16, 24, 1]);
+    PANEL[8].push([19, 6, 40, 32, 1]);
+    PANEL[8].push([20, 7, 32, 32, 1]);
+    PANEL[8].push([21, 5, 24, 32, 1]);
+    PANEL[8].push([22, 5, 16, 32, 1]);
+    PANEL[8].push([8, 1, 16, 40]);
+    PANEL[8].push([9, 1, 24, 40]);
+    PANEL[8].push([9, 2, 32, 40]);
+    PANEL[8].push([8, 2, 40, 40, 1]);
 
-PANEL[12].push([8, 1, 16, 0]);
-PANEL[12].push([9, 1, 24, 0]);
-PANEL[12].push([9, 2, 32, 0]);
-PANEL[12].push([8, 2, 40, 0, 1]);
-PANEL[12].push([6, 2, 56, 8]);
-PANEL[12].push([7, 2, 56, 16, , 1]);
-PANEL[12].push([7, 1, 56, 24, , 1]);
-PANEL[12].push([6, 1, 56, 32, , 1]);
-PANEL[12].push([6, 2, 48, 8]);
-PANEL[12].push([7, 2, 48, 16, , 1]);
-PANEL[12].push([7, 1, 48, 24, , 1]);
-PANEL[12].push([6, 1, 48, 32, , 1]);
-PANEL[12].push([10, 5, 40, 32, 1, 1]);
-PANEL[12].push([11, 5, 32, 32, 1, 1]);
-PANEL[12].push([12, 5, 40, 24, 1, 1]);
-PANEL[12].push([13, 5, 32, 24, 1, 1]);
-PANEL[12].push([14, 5, 24, 24, 1, 1]);
-PANEL[12].push([15, 7, 40, 16, 1, 1]);
-PANEL[12].push([16, 8, 32, 16, 1, 1]);
-PANEL[12].push([17, 5, 24, 16, 1, 1]);
-PANEL[12].push([18, 5, 16, 16, 1, 1]);
-PANEL[12].push([19, 6, 40, 8, 1, 1]);
-PANEL[12].push([20, 7, 32, 8, 1, 1]);
-PANEL[12].push([21, 5, 24, 8, 1, 1]);
-PANEL[12].push([22, 5, 16, 8, 1, 1]);
+    PANEL[12].push([8, 1, 16, 0]);
+    PANEL[12].push([9, 1, 24, 0]);
+    PANEL[12].push([9, 2, 32, 0]);
+    PANEL[12].push([8, 2, 40, 0, 1]);
+    PANEL[12].push([6, 2, 56, 8]);
+    PANEL[12].push([7, 2, 56, 16, , 1]);
+    PANEL[12].push([7, 1, 56, 24, , 1]);
+    PANEL[12].push([6, 1, 56, 32, , 1]);
+    PANEL[12].push([6, 2, 48, 8]);
+    PANEL[12].push([7, 2, 48, 16, , 1]);
+    PANEL[12].push([7, 1, 48, 24, , 1]);
+    PANEL[12].push([6, 1, 48, 32, , 1]);
+    PANEL[12].push([10, 5, 40, 32, 1, 1]);
+    PANEL[12].push([11, 5, 32, 32, 1, 1]);
+    PANEL[12].push([12, 5, 40, 24, 1, 1]);
+    PANEL[12].push([13, 5, 32, 24, 1, 1]);
+    PANEL[12].push([14, 5, 24, 24, 1, 1]);
+    PANEL[12].push([15, 7, 40, 16, 1, 1]);
+    PANEL[12].push([16, 8, 32, 16, 1, 1]);
+    PANEL[12].push([17, 5, 24, 16, 1, 1]);
+    PANEL[12].push([18, 5, 16, 16, 1, 1]);
+    PANEL[12].push([19, 6, 40, 8, 1, 1]);
+    PANEL[12].push([20, 7, 32, 8, 1, 1]);
+    PANEL[12].push([21, 5, 24, 8, 1, 1]);
+    PANEL[12].push([22, 5, 16, 8, 1, 1]);
 
-PANEL[9].push([6, 5, 0, 8]);
-PANEL[9].push([7, 5, 0, 16, , 1]);
-PANEL[9].push([7, 6, 0, 24, , 1]);
-PANEL[9].push([6, 6, 0, 32, , 1]);
-PANEL[9].push([6, 5, 8, 8]);
-PANEL[9].push([7, 5, 8, 16, , 1]);
-PANEL[9].push([7, 6, 8, 24, , 1]);
-PANEL[9].push([6, 6, 8, 32, , 1]);
-PANEL[9].push([10, 5, 16, 8]);
-PANEL[9].push([11, 5, 24, 8]);
-PANEL[9].push([12, 5, 16, 16]);
-PANEL[9].push([13, 5, 24, 16]);
-PANEL[9].push([14, 5, 32, 16]);
-PANEL[9].push([15, 7, 16, 24]);
-PANEL[9].push([16, 8, 24, 24]);
-PANEL[9].push([17, 5, 32, 24]);
-PANEL[9].push([18, 5, 40, 24]);
-PANEL[9].push([19, 6, 16, 32]);
-PANEL[9].push([20, 7, 24, 32]);
-PANEL[9].push([21, 5, 32, 32]);
-PANEL[9].push([22, 5, 40, 32]);
-PANEL[9].push([8, 2, 16, 40]);
-PANEL[9].push([9, 2, 24, 40, 1]);
-PANEL[9].push([9, 1, 32, 40, 1]);
-PANEL[9].push([8, 1, 40, 40, 1]);
+    PANEL[9].push([6, 5, 0, 8]);
+    PANEL[9].push([7, 5, 0, 16, , 1]);
+    PANEL[9].push([7, 6, 0, 24, , 1]);
+    PANEL[9].push([6, 6, 0, 32, , 1]);
+    PANEL[9].push([6, 5, 8, 8]);
+    PANEL[9].push([7, 5, 8, 16, , 1]);
+    PANEL[9].push([7, 6, 8, 24, , 1]);
+    PANEL[9].push([6, 6, 8, 32, , 1]);
+    PANEL[9].push([10, 5, 16, 8]);
+    PANEL[9].push([11, 5, 24, 8]);
+    PANEL[9].push([12, 5, 16, 16]);
+    PANEL[9].push([13, 5, 24, 16]);
+    PANEL[9].push([14, 5, 32, 16]);
+    PANEL[9].push([15, 7, 16, 24]);
+    PANEL[9].push([16, 8, 24, 24]);
+    PANEL[9].push([17, 5, 32, 24]);
+    PANEL[9].push([18, 5, 40, 24]);
+    PANEL[9].push([19, 6, 16, 32]);
+    PANEL[9].push([20, 7, 24, 32]);
+    PANEL[9].push([21, 5, 32, 32]);
+    PANEL[9].push([22, 5, 40, 32]);
+    PANEL[9].push([8, 2, 16, 40]);
+    PANEL[9].push([9, 2, 24, 40, 1]);
+    PANEL[9].push([9, 1, 32, 40, 1]);
+    PANEL[9].push([8, 1, 40, 40, 1]);
 
-PANEL[13].push([6, 2, 0, 8]);
-PANEL[13].push([7, 2, 0, 16, , 1]);
-PANEL[13].push([7, 1, 0, 24, , 1]);
-PANEL[13].push([6, 1, 0, 32, , 1]);
-PANEL[13].push([6, 2, 8, 8]);
-PANEL[13].push([7, 2, 8, 16, , 1]);
-PANEL[13].push([7, 1, 8, 24, , 1]);
-PANEL[13].push([6, 1, 8, 32, , 1]);
-PANEL[13].push([10, 5, 16, 32, , 1]);
-PANEL[13].push([11, 5, 24, 32, , 1]);
-PANEL[13].push([12, 5, 16, 24, , 1]);
-PANEL[13].push([13, 5, 24, 24, , 1]);
-PANEL[13].push([14, 5, 32, 24, , 1]);
-PANEL[13].push([15, 7, 16, 16, , 1]);
-PANEL[13].push([16, 8, 24, 16, , 1]);
-PANEL[13].push([17, 5, 32, 16, , 1]);
-PANEL[13].push([18, 5, 40, 16, , 1]);
-PANEL[13].push([19, 6, 16, 8, , 1]);
-PANEL[13].push([20, 7, 24, 8, , 1]);
-PANEL[13].push([21, 5, 32, 8, , 1]);
-PANEL[13].push([22, 5, 40, 8, , 1]);
-PANEL[13].push([8, 2, 16, 0]);
-PANEL[13].push([9, 2, 24, 0, 1]);
-PANEL[13].push([9, 1, 32, 0, 1]);
-PANEL[13].push([8, 1, 40, 0, 1]);
+    PANEL[13].push([6, 2, 0, 8]);
+    PANEL[13].push([7, 2, 0, 16, , 1]);
+    PANEL[13].push([7, 1, 0, 24, , 1]);
+    PANEL[13].push([6, 1, 0, 32, , 1]);
+    PANEL[13].push([6, 2, 8, 8]);
+    PANEL[13].push([7, 2, 8, 16, , 1]);
+    PANEL[13].push([7, 1, 8, 24, , 1]);
+    PANEL[13].push([6, 1, 8, 32, , 1]);
+    PANEL[13].push([10, 5, 16, 32, , 1]);
+    PANEL[13].push([11, 5, 24, 32, , 1]);
+    PANEL[13].push([12, 5, 16, 24, , 1]);
+    PANEL[13].push([13, 5, 24, 24, , 1]);
+    PANEL[13].push([14, 5, 32, 24, , 1]);
+    PANEL[13].push([15, 7, 16, 16, , 1]);
+    PANEL[13].push([16, 8, 24, 16, , 1]);
+    PANEL[13].push([17, 5, 32, 16, , 1]);
+    PANEL[13].push([18, 5, 40, 16, , 1]);
+    PANEL[13].push([19, 6, 16, 8, , 1]);
+    PANEL[13].push([20, 7, 24, 8, , 1]);
+    PANEL[13].push([21, 5, 32, 8, , 1]);
+    PANEL[13].push([22, 5, 40, 8, , 1]);
+    PANEL[13].push([8, 2, 16, 0]);
+    PANEL[13].push([9, 2, 24, 0, 1]);
+    PANEL[13].push([9, 1, 32, 0, 1]);
+    PANEL[13].push([8, 1, 40, 0, 1]);
 
-PANEL[10].push([6, 2, 56, 8]);
-PANEL[10].push([7, 2, 56, 16, , 1]);
-PANEL[10].push([7, 1, 56, 24, , 1]);
-PANEL[10].push([6, 1, 56, 32, , 1]);
-PANEL[10].push([6, 2, 48, 8]);
-PANEL[10].push([7, 2, 48, 16, , 1]);
-PANEL[10].push([7, 1, 48, 24, , 1]);
-PANEL[10].push([6, 1, 48, 32, , 1]);
-PANEL[10].push([10, 2, 40, 8, 1]);
-PANEL[10].push([11, 2, 32, 8, 1]);
-PANEL[10].push([12, 2, 40, 16, 1]);
-PANEL[10].push([13, 2, 32, 16, 1]);
-PANEL[10].push([14, 2, 24, 16, 1]);
-PANEL[10].push([15, 3, 40, 24, 1]);
-PANEL[10].push([16, 4, 32, 24, 1]);
-PANEL[10].push([17, 2, 24, 24, 1]);
-PANEL[10].push([18, 2, 16, 24, 1]);
-PANEL[10].push([19, 1, 40, 32, 1]);
-PANEL[10].push([20, 3, 32, 32, 1]);
-PANEL[10].push([21, 2, 24, 32, 1]);
-PANEL[10].push([22, 2, 16, 32, 1]);
-PANEL[10].push([8, 2, 16, 40]);
-PANEL[10].push([9, 2, 24, 40, 1]);
-PANEL[10].push([9, 1, 32, 40, 1]);
-PANEL[10].push([8, 1, 40, 40, 1]);
+    PANEL[10].push([6, 2, 56, 8]);
+    PANEL[10].push([7, 2, 56, 16, , 1]);
+    PANEL[10].push([7, 1, 56, 24, , 1]);
+    PANEL[10].push([6, 1, 56, 32, , 1]);
+    PANEL[10].push([6, 2, 48, 8]);
+    PANEL[10].push([7, 2, 48, 16, , 1]);
+    PANEL[10].push([7, 1, 48, 24, , 1]);
+    PANEL[10].push([6, 1, 48, 32, , 1]);
+    PANEL[10].push([10, 2, 40, 8, 1]);
+    PANEL[10].push([11, 2, 32, 8, 1]);
+    PANEL[10].push([12, 2, 40, 16, 1]);
+    PANEL[10].push([13, 2, 32, 16, 1]);
+    PANEL[10].push([14, 2, 24, 16, 1]);
+    PANEL[10].push([15, 3, 40, 24, 1]);
+    PANEL[10].push([16, 4, 32, 24, 1]);
+    PANEL[10].push([17, 2, 24, 24, 1]);
+    PANEL[10].push([18, 2, 16, 24, 1]);
+    PANEL[10].push([19, 1, 40, 32, 1]);
+    PANEL[10].push([20, 3, 32, 32, 1]);
+    PANEL[10].push([21, 2, 24, 32, 1]);
+    PANEL[10].push([22, 2, 16, 32, 1]);
+    PANEL[10].push([8, 2, 16, 40]);
+    PANEL[10].push([9, 2, 24, 40, 1]);
+    PANEL[10].push([9, 1, 32, 40, 1]);
+    PANEL[10].push([8, 1, 40, 40, 1]);
 
-PANEL[14].push([6, 5, 56, 8]);
-PANEL[14].push([7, 5, 56, 16, , 1]);
-PANEL[14].push([7, 6, 56, 24, , 1]);
-PANEL[14].push([6, 6, 56, 32, , 1]);
-PANEL[14].push([6, 5, 48, 8]);
-PANEL[14].push([7, 5, 48, 16, , 1]);
-PANEL[14].push([7, 6, 48, 24, , 1]);
-PANEL[14].push([6, 6, 48, 32, , 1]);
-PANEL[14].push([10, 2, 40, 32, 1, 1]);
-PANEL[14].push([11, 2, 32, 32, 1, 1]);
-PANEL[14].push([12, 2, 40, 24, 1, 1]);
-PANEL[14].push([13, 2, 32, 24, 1, 1]);
-PANEL[14].push([14, 2, 24, 24, 1, 1]);
-PANEL[14].push([15, 3, 40, 16, 1, 1]);
-PANEL[14].push([16, 4, 32, 16, 1, 1]);
-PANEL[14].push([17, 2, 24, 16, 1, 1]);
-PANEL[14].push([18, 2, 16, 16, 1, 1]);
-PANEL[14].push([19, 1, 40, 8, 1, 1]);
-PANEL[14].push([20, 3, 32, 8, 1, 1]);
-PANEL[14].push([21, 2, 24, 8, 1, 1]);
-PANEL[14].push([22, 2, 16, 8, 1, 1]);
-PANEL[14].push([8, 2, 16, 0]);
-PANEL[14].push([9, 2, 24, 0, 1]);
-PANEL[14].push([9, 1, 32, 0, 1]);
-PANEL[14].push([8, 1, 40, 0, 1]);
+    PANEL[14].push([6, 5, 56, 8]);
+    PANEL[14].push([7, 5, 56, 16, , 1]);
+    PANEL[14].push([7, 6, 56, 24, , 1]);
+    PANEL[14].push([6, 6, 56, 32, , 1]);
+    PANEL[14].push([6, 5, 48, 8]);
+    PANEL[14].push([7, 5, 48, 16, , 1]);
+    PANEL[14].push([7, 6, 48, 24, , 1]);
+    PANEL[14].push([6, 6, 48, 32, , 1]);
+    PANEL[14].push([10, 2, 40, 32, 1, 1]);
+    PANEL[14].push([11, 2, 32, 32, 1, 1]);
+    PANEL[14].push([12, 2, 40, 24, 1, 1]);
+    PANEL[14].push([13, 2, 32, 24, 1, 1]);
+    PANEL[14].push([14, 2, 24, 24, 1, 1]);
+    PANEL[14].push([15, 3, 40, 16, 1, 1]);
+    PANEL[14].push([16, 4, 32, 16, 1, 1]);
+    PANEL[14].push([17, 2, 24, 16, 1, 1]);
+    PANEL[14].push([18, 2, 16, 16, 1, 1]);
+    PANEL[14].push([19, 1, 40, 8, 1, 1]);
+    PANEL[14].push([20, 3, 32, 8, 1, 1]);
+    PANEL[14].push([21, 2, 24, 8, 1, 1]);
+    PANEL[14].push([22, 2, 16, 8, 1, 1]);
+    PANEL[14].push([8, 2, 16, 0]);
+    PANEL[14].push([9, 2, 24, 0, 1]);
+    PANEL[14].push([9, 1, 32, 0, 1]);
+    PANEL[14].push([8, 1, 40, 0, 1]);
 
-PANEL[11].push([6, 2, 0, 8]);
-PANEL[11].push([7, 2, 0, 16, , 1]);
-PANEL[11].push([7, 1, 0, 24, , 1]);
-PANEL[11].push([6, 1, 0, 32, , 1]);
-PANEL[11].push([6, 2, 8, 8]);
-PANEL[11].push([7, 2, 8, 16, , 1]);
-PANEL[11].push([7, 1, 8, 24, , 1]);
-PANEL[11].push([6, 1, 8, 32, , 1]);
-PANEL[11].push([10, 2, 16, 8]);
-PANEL[11].push([11, 2, 24, 8]);
-PANEL[11].push([12, 2, 16, 16]);
-PANEL[11].push([13, 2, 24, 16]);
-PANEL[11].push([14, 2, 32, 16]);
-PANEL[11].push([15, 3, 16, 24]);
-PANEL[11].push([16, 4, 24, 24]);
-PANEL[11].push([17, 2, 32, 24]);
-PANEL[11].push([18, 2, 40, 24]);
-PANEL[11].push([19, 1, 16, 32]);
-PANEL[11].push([20, 3, 24, 32]);
-PANEL[11].push([21, 2, 32, 32]);
-PANEL[11].push([22, 2, 40, 32]);
-PANEL[11].push([8, 1, 16, 40]);
-PANEL[11].push([9, 1, 24, 40]);
-PANEL[11].push([9, 2, 32, 40]);
-PANEL[11].push([8, 2, 40, 40, 1]);
+    PANEL[11].push([6, 2, 0, 8]);
+    PANEL[11].push([7, 2, 0, 16, , 1]);
+    PANEL[11].push([7, 1, 0, 24, , 1]);
+    PANEL[11].push([6, 1, 0, 32, , 1]);
+    PANEL[11].push([6, 2, 8, 8]);
+    PANEL[11].push([7, 2, 8, 16, , 1]);
+    PANEL[11].push([7, 1, 8, 24, , 1]);
+    PANEL[11].push([6, 1, 8, 32, , 1]);
+    PANEL[11].push([10, 2, 16, 8]);
+    PANEL[11].push([11, 2, 24, 8]);
+    PANEL[11].push([12, 2, 16, 16]);
+    PANEL[11].push([13, 2, 24, 16]);
+    PANEL[11].push([14, 2, 32, 16]);
+    PANEL[11].push([15, 3, 16, 24]);
+    PANEL[11].push([16, 4, 24, 24]);
+    PANEL[11].push([17, 2, 32, 24]);
+    PANEL[11].push([18, 2, 40, 24]);
+    PANEL[11].push([19, 1, 16, 32]);
+    PANEL[11].push([20, 3, 24, 32]);
+    PANEL[11].push([21, 2, 32, 32]);
+    PANEL[11].push([22, 2, 40, 32]);
+    PANEL[11].push([8, 1, 16, 40]);
+    PANEL[11].push([9, 1, 24, 40]);
+    PANEL[11].push([9, 2, 32, 40]);
+    PANEL[11].push([8, 2, 40, 40, 1]);
 
-PANEL[15].push([6, 5, 0, 8]);
-PANEL[15].push([7, 5, 0, 16, , 1]);
-PANEL[15].push([7, 6, 0, 24, , 1]);
-PANEL[15].push([6, 6, 0, 32, , 1]);
-PANEL[15].push([6, 5, 8, 8]);
-PANEL[15].push([7, 5, 8, 16, , 1]);
-PANEL[15].push([7, 6, 8, 24, , 1]);
-PANEL[15].push([6, 6, 8, 32, , 1]);
-PANEL[15].push([10, 2, 16, 32, , 1]);
-PANEL[15].push([11, 2, 24, 32, , 1]);
-PANEL[15].push([12, 2, 16, 24, , 1]);
-PANEL[15].push([13, 2, 24, 24, , 1]);
-PANEL[15].push([14, 2, 32, 24, , 1]);
-PANEL[15].push([15, 3, 16, 16, , 1]);
-PANEL[15].push([16, 4, 24, 16, , 1]);
-PANEL[15].push([17, 2, 32, 16, , 1]);
-PANEL[15].push([18, 2, 40, 16, , 1]);
-PANEL[15].push([19, 1, 16, 8, , 1]);
-PANEL[15].push([20, 3, 24, 8, , 1]);
-PANEL[15].push([21, 2, 32, 8, , 1]);
-PANEL[15].push([22, 2, 40, 8, , 1]);
-PANEL[15].push([8, 1, 16, 0]);
-PANEL[15].push([9, 1, 24, 0]);
-PANEL[15].push([9, 2, 32, 0]);
-PANEL[15].push([8, 2, 40, 0, 1]);
+    PANEL[15].push([6, 5, 0, 8]);
+    PANEL[15].push([7, 5, 0, 16, , 1]);
+    PANEL[15].push([7, 6, 0, 24, , 1]);
+    PANEL[15].push([6, 6, 0, 32, , 1]);
+    PANEL[15].push([6, 5, 8, 8]);
+    PANEL[15].push([7, 5, 8, 16, , 1]);
+    PANEL[15].push([7, 6, 8, 24, , 1]);
+    PANEL[15].push([6, 6, 8, 32, , 1]);
+    PANEL[15].push([10, 2, 16, 32, , 1]);
+    PANEL[15].push([11, 2, 24, 32, , 1]);
+    PANEL[15].push([12, 2, 16, 24, , 1]);
+    PANEL[15].push([13, 2, 24, 24, , 1]);
+    PANEL[15].push([14, 2, 32, 24, , 1]);
+    PANEL[15].push([15, 3, 16, 16, , 1]);
+    PANEL[15].push([16, 4, 24, 16, , 1]);
+    PANEL[15].push([17, 2, 32, 16, , 1]);
+    PANEL[15].push([18, 2, 40, 16, , 1]);
+    PANEL[15].push([19, 1, 16, 8, , 1]);
+    PANEL[15].push([20, 3, 24, 8, , 1]);
+    PANEL[15].push([21, 2, 32, 8, , 1]);
+    PANEL[15].push([22, 2, 40, 8, , 1]);
+    PANEL[15].push([8, 1, 16, 0]);
+    PANEL[15].push([9, 1, 24, 0]);
+    PANEL[15].push([9, 2, 32, 0]);
+    PANEL[15].push([8, 2, 40, 0, 1]);
+};
+panelReset();
 
 // [0: top, 1: bottom, 2: left, 3: right]
 const PANEL_TERMINAL = [
@@ -792,11 +995,15 @@ function shuffle(array) {
     if (array[15] > 7) shuffle(array);
 }
 
-shuffle(PANEL_MAP);
-// console.log(PANEL_MAP);
+if (mode == 0) {
+    PANEL_MAP = [0, 5, 14, 11, 15, 3, 4, 2, 7, 12, 9, 6, 8, 10, 13, 1];
+} else if (mode == 1) {
+    shuffle(PANEL_MAP);
+}
+// console.log(JSON.stringify(PANEL_MAP));
 
 let REMOVAL_MAP_ID = 15;
-const REMOVAL_PID = PANEL_MAP[REMOVAL_MAP_ID];
+let REMOVAL_PID = PANEL_MAP[REMOVAL_MAP_ID];
 PANEL[REMOVAL_PID] = [];
 PANEL_TERMINAL[REMOVAL_PID] = [];
 
@@ -881,22 +1088,27 @@ const setBg = () => {
 let BG0 = setBg();
 // console.log(BG0);
 
-// 1: star (14)
-let item = Array(16);
-item[PANEL_MAP[1]] = 1;
-item[PANEL_MAP[2]] = 1;
-item[PANEL_MAP[3]] = 1;
-item[PANEL_MAP[4]] = 1;
-item[PANEL_MAP[5]] = 1;
-item[PANEL_MAP[6]] = 1;
-item[PANEL_MAP[7]] = 1;
-item[PANEL_MAP[8]] = 1;
-item[PANEL_MAP[9]] = 1;
-item[PANEL_MAP[10]] = 1;
-item[PANEL_MAP[11]] = 1;
-item[PANEL_MAP[12]] = 1;
-item[PANEL_MAP[13]] = 1;
-item[PANEL_MAP[14]] = 1;
+// 1: star[13], 2: heart[1]
+let item;
+
+const itemReset = () => {
+    item = Array(16);
+    item[PANEL_MAP[1]] = 1;
+    item[PANEL_MAP[2]] = 1;
+    item[PANEL_MAP[3]] = 1;
+    item[PANEL_MAP[4]] = 1;
+    item[PANEL_MAP[5]] = 1;
+    item[PANEL_MAP[6]] = 1;
+    item[PANEL_MAP[7]] = 1;
+    item[PANEL_MAP[8]] = 1;
+    item[PANEL_MAP[9]] = 1;
+    item[PANEL_MAP[10]] = 1;
+    item[PANEL_MAP[11]] = 1;
+    item[PANEL_MAP[12]] = 1;
+    item[PANEL_MAP[13]] = 2; //heart
+    item[PANEL_MAP[14]] = 1;
+};
+itemReset();
 
 const SCALE = 3;
 // const SCALE = 2;
@@ -937,18 +1149,31 @@ const drawBG = () => {
 drawBG();
 
 // face { '': 26, 'happy': 36, 'sad': 37 }
-const unicorn = { panel: 0, x: 32, y: 24, direction: 'N', lr: 'R', face: '' };
+// const unicorn = { panel: 0, x: 32, y: 24, direction: 'N', lr: 'R', face: '', energy: 100 };
+const unicorn = {};
+const unicornReset = () => {
+    unicorn.panel = 0;
+    unicorn.x = 32;
+    unicorn.y = 24;
+    unicorn.direction = 'N';
+    unicorn.lr = 'R';
+    unicorn.face = '';
+    unicorn.energy = 100;
+};
+unicornReset();
 
 function getItem() {
     const targetPid = PANEL_MAP[unicorn.panel];
     if (item[targetPid] === undefined) return;
     if (unicorn.direction == 'N' || unicorn.direction == 'S') {
         if (unicorn.y == 24) {
+            if (item[targetPid] == 2) unicorn.energy = 100;
             item[targetPid] = undefined;
             unicorn.face = 'happy';
         }
     } else {
         if (unicorn.x == 32) {
+            if (item[targetPid] == 2) unicorn.energy = 100;
             item[targetPid] = undefined;
             unicorn.face = 'happy';
         }
@@ -968,11 +1193,11 @@ const unicornMove = () => {
                 ) {
                     unicorn.panel -= 4;
                     unicorn.y = 48;
-                    // unicorn.y = 47;
                 } else {
                     unicorn.direction = 'S';
                 }
-                unicorn.face = '';
+                unicorn.energy--;
+                unicorn.face = unicorn.energy == 0 ? 'sad' : '';
             } else {
                 unicorn.direction = terminal[2] !== undefined ? 'W' : 'E';
             }
@@ -989,11 +1214,11 @@ const unicornMove = () => {
                 ) {
                     unicorn.panel += 4;
                     unicorn.y = 0;
-                    // unicorn.y = 1;
                 } else {
                     unicorn.direction = 'N';
                 }
-                unicorn.face = '';
+                unicorn.energy--;
+                unicorn.face = unicorn.energy == 0 ? 'sad' : '';
             } else {
                 unicorn.direction = terminal[2] !== undefined ? 'W' : 'E';
             }
@@ -1011,11 +1236,11 @@ const unicornMove = () => {
                 ) {
                     unicorn.panel--;
                     unicorn.x = 64;
-                    // unicorn.x = 63;
                 } else {
                     unicorn.direction = 'E';
                 }
-                unicorn.face = '';
+                unicorn.energy--;
+                unicorn.face = unicorn.energy == 0 ? 'sad' : '';
             } else {
                 unicorn.direction = terminal[0] !== undefined ? 'N' : 'S';
             }
@@ -1033,11 +1258,11 @@ const unicornMove = () => {
                 ) {
                     unicorn.panel++;
                     unicorn.x = 0;
-                    // unicorn.x = 1;
                 } else {
                     unicorn.direction = 'W';
                 }
-                unicorn.face = '';
+                unicorn.energy--;
+                unicorn.face = unicorn.energy == 0 ? 'sad' : '';
             } else {
                 unicorn.direction = terminal[0] !== undefined ? 'N' : 'S';
             }
@@ -1056,46 +1281,62 @@ const main = (timestamp) => {
         unicornMove();
         getItem();
 
-        document.querySelector('#debug').innerHTML = 14 - item.filter((i) => i).length;
-
         // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
         // let SPR = counter % 4 == 0 ? [...sprStar0] : [...sprStar1];
         const SPR = [];
+        pointer[1].forEach((s) => SPR.push([s[0], s[1], s[2], s[3], s[4]]));
+
         item.forEach((i, pid) => {
             if (i === undefined) return;
+            const mapID = PANEL_MAP.findIndex((m) => m == pid);
+            const xOffset = (mapID % 4) * 64;
+            const yOffset = (mapID >> 2) * 48;
             if (i == 1) {
-                const mapID = PANEL_MAP.findIndex((m) => m == pid);
-                const xOffset = (mapID % 4) * 64;
-                const yOffset = (mapID >> 2) * 48;
                 const sprStar = counter % 4 == 0 ? [...sprStar0] : [...sprStar1];
                 sprStar.forEach((s) =>
                     SPR.push([s[0], s[1], s[2] + xOffset, s[3] + yOffset, s[4], s[5], s[6]]),
                 );
+            } else if (i == 2) {
+                const os = [0, 1, 2, 3, 3, 4, 4, 3, 3, 2, 1, 0];
+                const key = Math.floor(timestamp / 128) % 10;
+                sprHeart.forEach((s) =>
+                    SPR.push([
+                        s[0],
+                        s[1],
+                        s[2] + xOffset,
+                        s[3] + yOffset - os[key],
+                        s[4],
+                        s[5],
+                        s[6],
+                    ]),
+                );
             }
         });
 
+        const remainingStars = item.filter((i) => i == 1).length;
+        const gettingStars = 13 - remainingStars;
+        // document.querySelector('#debug').innerHTML = gettingStars;
+
         // status
         sprStar1.forEach((s) => SPR.push([s[0], s[1], s[2] - 16, s[3] + 184, s[4]]));
-        SPR.push([41, 13, 24, 200]);
-        SPR.push([42, 13, 24, 208]);
-        SPR.push([43, 13, 32, 200]);
-        SPR.push([44, 13, 32, 208]);
-        SPR.push([45, 13, 40, 200]);
-        SPR.push([46, 13, 40, 208]);
-        SPR.push([47, 13, 48, 200]);
-        SPR.push([48, 13, 48, 208]);
-        SPR.push([49, 13, 56, 200]);
-        SPR.push([50, 13, 56, 208]);
-        SPR.push([51, 13, 64, 200]);
-        SPR.push([52, 13, 64, 208]);
-        SPR.push([53, 13, 72, 200]);
-        SPR.push([54, 13, 72, 208]);
-        SPR.push([55, 13, 80, 200]);
-        SPR.push([56, 13, 80, 208]);
-        SPR.push([57, 13, 88, 200]);
-        SPR.push([58, 13, 88, 208]);
-        SPR.push([59, 13, 96, 200]);
-        SPR.push([60, 13, 96, 208]);
+        const gettingStarsString = String(gettingStars).padStart(2, '0');
+        const digit1 = Number(gettingStarsString[0]);
+        const digit10 = Number(gettingStarsString[1]);
+
+        sprNumber[digit1].forEach((s) => SPR.push([s[0], s[1], s[2] + 24, s[3] + 200, s[4], s[5]]));
+        sprNumber[digit10].forEach((s) =>
+            SPR.push([s[0], s[1], s[2] + 32, s[3] + 200, s[4], s[5]]),
+        );
+        SPR.push([59, 13, 40, 200]);
+        SPR.push([59, 13, 40, 208, 1, 1]);
+        sprNumber[1].forEach((s) => SPR.push([s[0], s[1], s[2] + 48, s[3] + 200, s[4], s[5]]));
+        sprNumber[3].forEach((s) => SPR.push([s[0], s[1], s[2] + 56, s[3] + 200, s[4], s[5]]));
+
+        sprHeart.forEach((s) => SPR.push([s[0], s[1], s[2] + 48, s[3] + 184, s[4], s[5]]));
+
+        energy[Math.ceil(unicorn.energy / 10)].forEach((s) =>
+            SPR.push([s[0], s[1], s[2], s[3], s[4], s[5]]),
+        );
 
         oscSp1Ctx.fillStyle = lch(bgColor);
         oscSp1Ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -1125,12 +1366,24 @@ const main = (timestamp) => {
         canvasRenderingCtx.drawImage(oscSp1, 0, 0);
         canvasRenderingCtx.drawImage(oscBg, 0, 0);
         canvasRenderingCtx.drawImage(oscSp0, 0, 0);
+
+        // stage clear
+        if (remainingStars == 0) {
+            console.log('finish');
+            return;
+        }
+
+        // game over
+        if (unicorn.energy == 0) {
+            console.log('game over');
+            return;
+        }
     }
     requestAnimationFrame(main);
 };
 main();
 
-CANVAS.onclick = (e) => {
+const panelMove = (e) => {
     const rect = e.target.getBoundingClientRect();
     const clickX = e.clientX - Math.floor(rect.left);
     const clickY = e.clientY - Math.floor(rect.top);
@@ -1196,6 +1449,23 @@ CANVAS.onclick = (e) => {
     BG0 = setBg();
 
     drawBG();
+};
+
+CANVAS.onclick = (e) => {
+    if (mode == 0) {
+        mode = 1;
+        unicornReset();
+        shuffle(PANEL_MAP);
+        panelReset();
+        REMOVAL_PID = PANEL_MAP[REMOVAL_MAP_ID];
+        PANEL[REMOVAL_PID] = [];
+        PANEL_TERMINAL[REMOVAL_PID] = [];
+        BG0 = setBg();
+        drawBG();
+        itemReset();
+    } else if (mode == 1) {
+        panelMove(e);
+    }
 };
 
 function adjustContainer() {
