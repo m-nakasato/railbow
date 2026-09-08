@@ -22,6 +22,7 @@ export default [
                 requestAnimationFrame: 'readonly',
                 cancelAnimationFrame: 'readonly',
                 OffscreenCanvas: 'readonly',
+                MouseEvent: 'readonly',
                 // Web Audio API globals
                 AudioBufferSourceNode: 'readonly',
                 GainNode: 'readonly',

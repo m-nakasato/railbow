@@ -180,10 +180,14 @@ const CHR = (
     '/////6qqZZZllmWWZZZllg' + //  65: energy r 2.5 / 0.0
     '/////6qqJZYlliWWJZYllg' + //  66: energy r 2.0 / 0.5
     '/////6qqIJYgliCWIJYglg' + //  67: energy r 1.0 / 1.5
-    '//v/4v/i/+L/4v/i/+L/4g' + //  68: pointer 0
-    '//////////+//yv/Ir8iLw' + //  69: pointer 1
-    '+uDgoPgA/gD/gP+A/+D/+g' + //  70: pointer 2
-    'Ai8ALwAvAC8ALwC/Av+r/w' + //  71: pointer 3
+    // '//v/4v/i/+L/4v/i/+L/4g' + //  68: pointer 0
+    // '//////////+//yv/Ir8iLw' + //  69: pointer 1
+    // '+uDgoPgA/gD/gP+A/+D/+g' + //  70: pointer 2
+    // 'Ai8ALwAvAC8ALwC/Av+r/w' + //  71: pointer 3
+    '/9X/Wf9i/2L/Yv9i/2L9Yg' + //  68: pointer 0
+    '/////3//f/9f/5X/KV8ilw' + //  69: pointer 1
+    '9aD2IPYA9gD1gP1g/1r/1Q' + //  70: pointer 2
+    'AicAJwAnACcAlwJfqX9V/w' + //  71: pointer 3
     '//f/f//7/eL/4v/i/+L/4g' + //  72: pointer 0
     '//9/////3/+//yv/Ir8iLw' + //  73: pointer 1
     ''
@@ -210,21 +214,22 @@ const PLT = [
     '252500', // 15: heart 1
     '302500', // 16: energy 0
     '253000', // 17: energy 0
-    '36151d', // 18: energy 0
+    // '36151d', // 18: pointer
+    '36301d', // 18: pointer
 ].map((p) => p.match(/.{2}/g));
 
 const pointer = [
     [
-        [68, 18, 0, 0],
-        [69, 18, 8, 0],
-        [70, 18, 0, 8],
-        [71, 18, 8, 8],
+        [68, 18, -6, 0],
+        [69, 18, 2, 0],
+        [70, 18, -6, 8],
+        [71, 18, 2, 8],
     ],
     [
-        [72, 18, 0, 0],
-        [73, 18, 8, 0],
-        [70, 18, 0, 8],
-        [71, 18, 8, 8],
+        [72, 18, -6, 0],
+        [73, 18, 2, 0],
+        [70, 18, -6, 8],
+        [71, 18, 2, 8],
     ],
 ];
 
@@ -684,24 +689,28 @@ const panelReset = () => {
 panelReset();
 
 // [0: top, 1: bottom, 2: left, 3: right]
-const PANEL_TERMINAL = [
-    [, , 1, 1], //  0
-    [, , 1, 1], //  1
-    [, , 0, 0], //  2
-    [, , 0, 0], //  3
-    [1, 1], //      4
-    [1, 1], //      5
-    [0, 0], //      6
-    [0, 0], //      7
-    [, 1, , 1], //  8
-    [, 0, 1], //    9
-    [, 0, , 0], // 10
-    [, 1, 0], //   11
-    [1, , , 0], // 12
-    [0, , 0], //   13
-    [0, , , 1], // 14
-    [1, , 1], //   15
-];
+let PANEL_TERMINAL;
+const panelTerminalReset = () => {
+    PANEL_TERMINAL = [
+        [, , 1, 1], //  0
+        [, , 1, 1], //  1
+        [, , 0, 0], //  2
+        [, , 0, 0], //  3
+        [1, 1], //      4
+        [1, 1], //      5
+        [0, 0], //      6
+        [0, 0], //      7
+        [, 1, , 1], //  8
+        [, 0, 1], //    9
+        [, 0, , 0], // 10
+        [, 1, 0], //   11
+        [1, , , 0], // 12
+        [0, , 0], //   13
+        [0, , , 1], // 14
+        [1, , 1], //   15
+    ];
+};
+panelTerminalReset();
 
 let PANEL_MAP = [...Array(16).keys()];
 // console.log(PANEL_MAP);
@@ -715,16 +724,17 @@ function shuffle(array) {
 }
 
 if (mode == 0) {
-    PANEL_MAP = [0, 5, 14, 11, 15, 3, 4, 2, 7, 12, 9, 6, 8, 10, 13, 1];
+    PANEL_MAP = [4, 11, 8, 2, 7, 12, 13, 10, 9, 6, 3, 1, 14, 5, 15, 0];
+    // shuffle(PANEL_MAP);
 } else if (mode == 1) {
     shuffle(PANEL_MAP);
 }
-// console.log(JSON.stringify(PANEL_MAP));
+console.log(JSON.stringify(PANEL_MAP));
 
 let REMOVAL_MAP_ID = 15;
-let REMOVAL_PID = PANEL_MAP[REMOVAL_MAP_ID];
-PANEL[REMOVAL_PID] = [];
-PANEL_TERMINAL[REMOVAL_PID] = [];
+let removalPid = PANEL_MAP[REMOVAL_MAP_ID];
+PANEL[removalPid] = [];
+PANEL_TERMINAL[removalPid] = [];
 
 const setBg = () => {
     const bg = PANEL_MAP.flatMap((pid, order) => {
@@ -990,6 +1000,10 @@ const unicornMove = () => {
 };
 
 let lastTime = 0;
+let demoLastTime = 0;
+let demoXos = 128;
+let demoYos = 96;
+let demoCoord = [224 * 3, 24 * 3];
 const main = (timestamp) => {
     const counter = Math.floor(timestamp / 250);
     // document.querySelector('#debug').innerHTML = counter + ': ' + (counter % 2);
@@ -1003,7 +1017,6 @@ const main = (timestamp) => {
         // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
         // let SPR = counter % 4 == 0 ? [...sprStar0] : [...sprStar1];
         const SPR = [];
-        pointer[1].forEach((s) => SPR.push([s[0], s[1], s[2], s[3], s[4]]));
 
         item.forEach((i, pid) => {
             if (i === undefined) return;
@@ -1034,7 +1047,7 @@ const main = (timestamp) => {
 
         const remainingStars = item.filter((i) => i == 1).length;
         const gettingStars = 13 - remainingStars;
-        // document.querySelector('#debug').innerHTML = gettingStars;
+        document.querySelector('#debug').innerHTML = mode;
 
         // status
         sprStar1.forEach((s) => SPR.push([s[0], s[1], s[2] - 16, s[3] + 184, s[4]]));
@@ -1076,6 +1089,26 @@ const main = (timestamp) => {
             SPR.push([s[0], s[1], s[2] + xOffset, s[3] + yOffset, s[4], s[5], s[6]]),
         );
 
+        // demo
+        if (mode == 0) {
+            if (timestamp - demoLastTime > 3000) {
+                demoXos = demoCoord[0];
+                demoYos = demoCoord[1];
+                const clickEvent = new MouseEvent('click', {
+                    bubbles: true,
+                    cancelable: true,
+                    clientX: demoCoord[0], // 必要に応じて座標を指定
+                    clientY: demoCoord[1],
+                });
+                CANVAS.dispatchEvent(clickEvent);
+
+                // CANVAS.left;
+                // CANVAS.top;
+                demoLastTime = timestamp;
+            }
+            pointer[0].forEach((s) => SPR.push([s[0], s[1], s[2] + demoXos, s[3] + demoYos, s[4]]));
+        }
+
         //0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority
         SPR.filter((chr) => chr[6] === 0 || chr[6] === undefined).forEach((chr) =>
             drawChr(chr, oscSp0Ctx),
@@ -1102,16 +1135,15 @@ const main = (timestamp) => {
 };
 main();
 
-const panelMove = (e) => {
-    const rect = e.target.getBoundingClientRect();
-    const clickX = e.clientX - Math.floor(rect.left);
-    const clickY = e.clientY - Math.floor(rect.top);
-    // const blockW = e.target.width / 4;
-    // const blockH = e.target.height / 4;
-    const blockW = 64 * SCALE;
-    const blockH = 48 * SCALE;
-    const clickCol = Math.floor(clickX / blockW);
-    const clickRow = Math.floor(clickY / blockH);
+// const panelMove = (e) => {
+const panelMove = (clickCol, clickRow) => {
+    // const rect = e.target.getBoundingClientRect();
+    // const clickX = e.clientX - Math.floor(rect.left);
+    // const clickY = e.clientY - Math.floor(rect.top);
+    // const blockW = 64 * SCALE;
+    // const blockH = 48 * SCALE;
+    // const clickCol = Math.floor(clickX / blockW);
+    // const clickRow = Math.floor(clickY / blockH);
     const clickMapId = clickRow * 4 + clickCol;
     const removalCol = REMOVAL_MAP_ID % 4;
     const removalRow = REMOVAL_MAP_ID >> 2;
@@ -1163,7 +1195,7 @@ const panelMove = (e) => {
                 unicorn.panel = unicorn.panel + 1;
         }
     }
-    PANEL_MAP[REMOVAL_MAP_ID] = REMOVAL_PID;
+    PANEL_MAP[REMOVAL_MAP_ID] = removalPid;
     // console.log('clickMapId: ' + clickMapId, 'removalMapId: ' + removalMapId);
     BG0 = setBg();
 
@@ -1171,19 +1203,32 @@ const panelMove = (e) => {
 };
 
 CANVAS.onclick = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    const clickX = e.clientX - Math.floor(rect.left);
+    const clickY = e.clientY - Math.floor(rect.top);
+    const blockW = 64 * SCALE;
+    const blockH = 48 * SCALE;
+    const clickCol = Math.floor(clickX / blockW);
+    const clickRow = Math.floor(clickY / blockH);
+    console.log(clickRow);
     if (mode == 0) {
-        mode = 1;
-        unicornReset();
-        shuffle(PANEL_MAP);
-        panelReset();
-        REMOVAL_PID = PANEL_MAP[REMOVAL_MAP_ID];
-        PANEL[REMOVAL_PID] = [];
-        PANEL_TERMINAL[REMOVAL_PID] = [];
-        BG0 = setBg();
-        drawBG();
-        itemReset();
+        if (clickRow > 3) {
+            mode = 1;
+            unicornReset();
+            shuffle(PANEL_MAP);
+            panelReset();
+            panelTerminalReset();
+            removalPid = PANEL_MAP[REMOVAL_MAP_ID];
+            PANEL[removalPid] = [];
+            PANEL_TERMINAL[removalPid] = [];
+            BG0 = setBg();
+            drawBG();
+            itemReset();
+        } else {
+            panelMove(clickCol, clickRow);
+        }
     } else if (mode == 1) {
-        panelMove(e);
+        panelMove(clickCol, clickRow);
     }
 };
 
