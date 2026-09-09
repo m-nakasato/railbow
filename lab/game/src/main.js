@@ -180,16 +180,16 @@ const CHR = (
     '/////6qqZZZllmWWZZZllg' + //  65: energy r 2.5 / 0.0
     '/////6qqJZYlliWWJZYllg' + //  66: energy r 2.0 / 0.5
     '/////6qqIJYgliCWIJYglg' + //  67: energy r 1.0 / 1.5
-    // '//v/4v/i/+L/4v/i/+L/4g' + //  68: pointer 0
-    // '//////////+//yv/Ir8iLw' + //  69: pointer 1
-    // '+uDgoPgA/gD/gP+A/+D/+g' + //  70: pointer 2
-    // 'Ai8ALwAvAC8ALwC/Av+r/w' + //  71: pointer 3
     '/9X/Wf9i/2L/Yv9i/2L9Yg' + //  68: pointer 0
     '/////3//f/9f/5X/KV8ilw' + //  69: pointer 1
     '9aD2IPYA9gD1gP1g/1r/1Q' + //  70: pointer 2
     'AicAJwAnACcAlwJfqX9V/w' + //  71: pointer 3
-    '//f/f//7/eL/4v/i/+L/4g' + //  72: pointer 0
-    '//9/////3/+//yv/Ir8iLw' + //  73: pointer 1
+    '///AAMVVxVXFAMU/xT/FPw' + //  72: demo 0
+    '//8P/1D/VT8FT/FP/FP8Uw' + //  73: demo 1
+    '///AAMqqyqrKAMo/ygDKqg' + //  74: demo 2
+    '//8AA6qjqqMAA///AA+qjw' + //  75: demo 3
+    '///AP8VPxU/FU8VTxRTFFA' + //  76: demo 4
+    'xQXFBcUxxTHFPMU8wD///w' + //  77: demo 5
     ''
 )
     .match(/.{22}/g)
@@ -214,26 +214,39 @@ const PLT = [
     '252500', // 15: heart 1
     '302500', // 16: energy 0
     '253000', // 17: energy 0
-    // '36151d', // 18: pointer
     '36301d', // 18: pointer
+    '302229', // 19: demo 0
+    '302724', // 20: demo 1
+    '302427', // 21: demo 2
 ].map((p) => p.match(/.{2}/g));
 
-const pointer = [
-    [
-        [68, 18, -6, 0],
-        [69, 18, 2, 0],
-        [70, 18, -6, 8],
-        [71, 18, 2, 8],
-    ],
-    [
-        [72, 18, -6, 0],
-        [73, 18, 2, 0],
-        [70, 18, -6, 8],
-        [71, 18, 2, 8],
-    ],
+const sprDemo = [
+    [72, 19, 0, 0],
+    [73, 19, 8, 0],
+    [72, 19, 0, 8, , 1],
+    [73, 19, 8, 8, , 1],
+    [74, 19, 24, 0],
+    [75, 19, 32, 0],
+    [74, 19, 24, 8, , 1],
+    [75, 19, 32, 8, , 1],
+    [76, 20, 48, 0],
+    [76, 20, 56, 0, 1],
+    [77, 20, 48, 8],
+    [77, 20, 56, 8, 1],
+    [73, 21, 72, 0, 1],
+    [73, 21, 80, 0],
+    [73, 21, 72, 8, 1, 1],
+    [73, 21, 80, 8, , 1],
 ];
 
-const energy = [
+const sprPointer = [
+    [68, 18, -6, 0],
+    [69, 18, 2, 0],
+    [70, 18, -6, 8],
+    [71, 18, 2, 8],
+];
+
+const sprEnergy = [
     [
         [62, 17, 88, 200],
         [65, 17, 96, 200],
@@ -999,11 +1012,87 @@ const unicornMove = () => {
     }
 };
 
+const panelMove = (clickCol, clickRow) => {
+    const clickMapId = clickRow * 4 + clickCol;
+    const removalCol = REMOVAL_MAP_ID % 4;
+    const removalRow = REMOVAL_MAP_ID >> 2;
+
+    const unicornCol = unicorn.panel % 4;
+    const unicornRow = unicorn.panel >> 2;
+
+    if (clickRow > 3) return;
+
+    // vertical slide
+    if (clickCol == removalCol) {
+        // north
+        if (clickRow > removalRow) {
+            for (let i = removalRow + 1; i <= clickRow; i++) {
+                PANEL_MAP[(i - 1) * 4 + clickCol] = PANEL_MAP[i * 4 + clickCol];
+            }
+            REMOVAL_MAP_ID = clickMapId;
+            if (unicornCol == clickCol && unicornRow > removalRow && unicornRow <= clickRow)
+                unicorn.panel = unicorn.panel - 4;
+        }
+        // south
+        if (clickRow < removalRow) {
+            for (let i = removalRow - 1; i >= clickRow; i--) {
+                PANEL_MAP[(i + 1) * 4 + clickCol] = PANEL_MAP[i * 4 + clickCol];
+            }
+            REMOVAL_MAP_ID = clickMapId;
+            if (unicornCol == clickCol && unicornRow < removalRow && unicornRow >= clickRow)
+                unicorn.panel = unicorn.panel + 4;
+        }
+    }
+    // horizontal slide
+    if (clickRow == removalRow) {
+        // west
+        if (clickCol > removalCol) {
+            for (let i = removalCol + 1; i <= clickCol; i++) {
+                PANEL_MAP[clickRow * 4 + i - 1] = PANEL_MAP[clickRow * 4 + i];
+            }
+            REMOVAL_MAP_ID = clickMapId;
+            if (unicornRow == clickRow && unicornCol > removalCol && unicornCol <= clickCol)
+                unicorn.panel = unicorn.panel - 1;
+        }
+        // east
+        if (clickCol < removalCol) {
+            for (let i = removalCol - 1; i >= clickCol; i--) {
+                PANEL_MAP[clickRow * 4 + i + 1] = PANEL_MAP[clickRow * 4 + i];
+            }
+            REMOVAL_MAP_ID = clickMapId;
+            if (unicornRow == clickRow && unicornCol < removalCol && unicornCol >= clickCol)
+                unicorn.panel = unicorn.panel + 1;
+        }
+    }
+    PANEL_MAP[REMOVAL_MAP_ID] = removalPid;
+    // console.log('clickMapId: ' + clickMapId, 'removalMapId: ' + removalMapId);
+    BG0 = setBg();
+
+    drawBG();
+};
+
 let lastTime = 0;
 let demoLastTime = 0;
 let demoXos = 128;
 let demoYos = 96;
-let demoCoord = [224 * 3, 24 * 3];
+let demoCoord = [
+    [3, 0],
+    [0, 0],
+    [2, 0],
+    [1, 1],
+    [1, 2],
+    [2, 3],
+    [2, 2],
+    [3, 0],
+    [3, 2],
+    [3, 2],
+    [3, 1],
+    [2, 1],
+    [2, 2],
+    [1, 2],
+];
+let panelMoveFlg = 0;
+let demoStep = 0;
 const main = (timestamp) => {
     const counter = Math.floor(timestamp / 250);
     // document.querySelector('#debug').innerHTML = counter + ': ' + (counter % 2);
@@ -1066,7 +1155,7 @@ const main = (timestamp) => {
 
         sprHeart.forEach((s) => SPR.push([s[0], s[1], s[2] + 48, s[3] + 184, s[4], s[5]]));
 
-        energy[Math.ceil(unicorn.energy / 10)].forEach((s) =>
+        sprEnergy[Math.ceil(unicorn.energy / 10)].forEach((s) =>
             SPR.push([s[0], s[1], s[2], s[3], s[4], s[5]]),
         );
 
@@ -1091,22 +1180,23 @@ const main = (timestamp) => {
 
         // demo
         if (mode == 0) {
-            if (timestamp - demoLastTime > 3000) {
-                demoXos = demoCoord[0];
-                demoYos = demoCoord[1];
-                const clickEvent = new MouseEvent('click', {
-                    bubbles: true,
-                    cancelable: true,
-                    clientX: demoCoord[0], // 必要に応じて座標を指定
-                    clientY: demoCoord[1],
-                });
-                CANVAS.dispatchEvent(clickEvent);
-
-                // CANVAS.left;
-                // CANVAS.top;
+            if (timestamp - demoLastTime > 1000) {
                 demoLastTime = timestamp;
+                demoXos = demoCoord[demoStep][0] * 64 + 32;
+                demoYos = demoCoord[demoStep][1] * 48 + 24;
+                if (panelMoveFlg) {
+                    panelMove(demoCoord[demoStep][0], demoCoord[demoStep][1]);
+                    panelMoveFlg ^= 1;
+                    if (demoCoord.length - 1 > demoStep) demoStep++;
+                } else {
+                    panelMoveFlg ^= 1;
+                }
             }
-            pointer[0].forEach((s) => SPR.push([s[0], s[1], s[2] + demoXos, s[3] + demoYos, s[4]]));
+            sprPointer.forEach((s) =>
+                SPR.push([s[0], s[1], s[2] + demoXos, s[3] + demoYos + panelMoveFlg * 2, s[4]]),
+            );
+            if (counter % 4 > 1)
+                sprDemo.forEach((s) => SPR.push([s[0], s[1], s[2] + 84, s[3] + 88, s[4], s[5]]));
         }
 
         //0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority
@@ -1135,73 +1225,6 @@ const main = (timestamp) => {
 };
 main();
 
-// const panelMove = (e) => {
-const panelMove = (clickCol, clickRow) => {
-    // const rect = e.target.getBoundingClientRect();
-    // const clickX = e.clientX - Math.floor(rect.left);
-    // const clickY = e.clientY - Math.floor(rect.top);
-    // const blockW = 64 * SCALE;
-    // const blockH = 48 * SCALE;
-    // const clickCol = Math.floor(clickX / blockW);
-    // const clickRow = Math.floor(clickY / blockH);
-    const clickMapId = clickRow * 4 + clickCol;
-    const removalCol = REMOVAL_MAP_ID % 4;
-    const removalRow = REMOVAL_MAP_ID >> 2;
-
-    const unicornCol = unicorn.panel % 4;
-    const unicornRow = unicorn.panel >> 2;
-
-    if (clickRow > 3) return;
-
-    // vertical slide
-    if (clickCol == removalCol) {
-        // north
-        if (clickRow > removalRow) {
-            for (let i = removalRow + 1; i <= clickRow; i++) {
-                PANEL_MAP[(i - 1) * 4 + clickCol] = PANEL_MAP[i * 4 + clickCol];
-            }
-            REMOVAL_MAP_ID = clickMapId;
-            if (unicornCol == clickCol && unicornRow > removalRow && unicornRow <= clickRow)
-                unicorn.panel = unicorn.panel - 4;
-        }
-        // south
-        if (clickRow < removalRow) {
-            for (let i = removalRow - 1; i >= clickRow; i--) {
-                PANEL_MAP[(i + 1) * 4 + clickCol] = PANEL_MAP[i * 4 + clickCol];
-            }
-            REMOVAL_MAP_ID = clickMapId;
-            if (unicornCol == clickCol && unicornRow < removalRow && unicornRow >= clickRow)
-                unicorn.panel = unicorn.panel + 4;
-        }
-    }
-    // horizontal slide
-    if (clickRow == removalRow) {
-        // west
-        if (clickCol > removalCol) {
-            for (let i = removalCol + 1; i <= clickCol; i++) {
-                PANEL_MAP[clickRow * 4 + i - 1] = PANEL_MAP[clickRow * 4 + i];
-            }
-            REMOVAL_MAP_ID = clickMapId;
-            if (unicornRow == clickRow && unicornCol > removalCol && unicornCol <= clickCol)
-                unicorn.panel = unicorn.panel - 1;
-        }
-        // east
-        if (clickCol < removalCol) {
-            for (let i = removalCol - 1; i >= clickCol; i--) {
-                PANEL_MAP[clickRow * 4 + i + 1] = PANEL_MAP[clickRow * 4 + i];
-            }
-            REMOVAL_MAP_ID = clickMapId;
-            if (unicornRow == clickRow && unicornCol < removalCol && unicornCol >= clickCol)
-                unicorn.panel = unicorn.panel + 1;
-        }
-    }
-    PANEL_MAP[REMOVAL_MAP_ID] = removalPid;
-    // console.log('clickMapId: ' + clickMapId, 'removalMapId: ' + removalMapId);
-    BG0 = setBg();
-
-    drawBG();
-};
-
 CANVAS.onclick = (e) => {
     const rect = e.target.getBoundingClientRect();
     const clickX = e.clientX - Math.floor(rect.left);
@@ -1210,7 +1233,6 @@ CANVAS.onclick = (e) => {
     const blockH = 48 * SCALE;
     const clickCol = Math.floor(clickX / blockW);
     const clickRow = Math.floor(clickY / blockH);
-    console.log(clickRow);
     if (mode == 0) {
         if (clickRow > 3) {
             mode = 1;
@@ -1218,18 +1240,19 @@ CANVAS.onclick = (e) => {
             shuffle(PANEL_MAP);
             panelReset();
             panelTerminalReset();
+            REMOVAL_MAP_ID = 15;
             removalPid = PANEL_MAP[REMOVAL_MAP_ID];
             PANEL[removalPid] = [];
             PANEL_TERMINAL[removalPid] = [];
             BG0 = setBg();
             drawBG();
             itemReset();
-        } else {
-            panelMove(clickCol, clickRow);
+            // console.log('removalPid', removalPid);
         }
     } else if (mode == 1) {
         panelMove(clickCol, clickRow);
     }
+    // console.log(PANEL_MAP);
 };
 
 function adjustContainer() {
