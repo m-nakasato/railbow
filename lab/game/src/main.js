@@ -28,19 +28,19 @@ const kms = {
     ],
     opt: [
         [
-            { env: [0.01, 0.09, 0.75, 0.05], vol: 0.4 },
-            { env: [0.01, 0, 1, 0.18], vol: 0.4 }, // triplet
+            { env: [0.01, 0.09, 0.75, 0.05], vol: 0.1 },
+            { env: [0.01, 0, 1, 0.18], vol: 0.1 }, // triplet
         ],
         [
-            { env: [0.01, 0.09, 0.75, 0.05], vol: 0.4 },
-            { env: [0.01, 0, 1, 0.18], vol: 0.4 }, // triplet
+            { env: [0.01, 0.09, 0.75, 0.05], vol: 0.1 },
+            { env: [0.01, 0, 1, 0.18], vol: 0.1 }, // triplet
         ],
-        [{ env: [0.01, 0.09, 1, 0.05], vol: 0.4 }],
+        [{ env: [0.01, 0.09, 1, 0.05], vol: 0.1 }],
         [
-            { env: [0, 0.09, 0, 0.05], vol: 0.4 },
-            { env: [0.01, 0.01, 0, 0], vol: 0.4 }, // closed hi-hat
-            { env: [0.01, 0.01, 0, 0], vol: 0.4, swg: 1 }, // closed hi-hat swing
-            { env: [0, 0.02, 0, 0.13], vol: 0.4 }, // bass drum
+            { env: [0, 0.09, 0, 0.05], vol: 0.1 },
+            { env: [0.01, 0.01, 0, 0], vol: 0.1 }, // closed hi-hat
+            { env: [0.01, 0.01, 0, 0], vol: 0.1, swg: 1 }, // closed hi-hat swing
+            { env: [0, 0.02, 0, 0.13], vol: 0.1 }, // bass drum
         ],
     ],
 };
@@ -62,15 +62,32 @@ const synthesizers = [
 
 let playID = null;
 
-document.querySelector('#play').onclick = () => {
+const bgmMain = () => {
     const playbackData = parse(kms);
     console.log(playbackData);
     playID = loop(synthesizers, playbackData, kms);
 };
 
-document.querySelector('#stop').onclick = () => {
+document.querySelector('#play').onclick = () => {
+    bgmMain();
+};
+
+const bgmStop = (playID) => {
     clearInterval(playID);
     stop(synthesizers);
+};
+
+document.querySelector('#stop').onclick = () => {
+    bgmStop(playID);
+};
+
+const seStar = () => {
+    let rtn = synthesizers[0].play(83, { vol: 0.1, dur: 0.1 });
+    synthesizers[0].play(88, { vol: 0.1, sta: rtn.end, dur: 1, env: [0, 0, 1, 1] });
+};
+
+document.querySelector('#star').onclick = () => {
+    seStar();
 };
 
 // document.getElementById('resume').onclick = async () => {
@@ -190,6 +207,65 @@ const CHR = (
     '//8AA6qjqqMAA///AA+qjw' + //  75: demo 3
     '///AP8VPxU/FU8VTxRTFFA' + //  76: demo 4
     'xQXFBcUxxTHFPMU8wD///w' + //  77: demo 5
+    'qqqqqqqqqqqqqqqgqoCqgA' + //  78: speech balloon lt
+    'qgCqAKoAqgCqAKoAqgCqAA' + //  79: speech balloon l
+    'qoCqgKqgqqqqqqqqqqqqqg' + //  80: speech balloon lb
+    'qqqqqqqqqqoAAAAAAAAAAA' + //  81: speech balloon t
+    'AAAAAAAAAACqqqqqqqqqqg' + //  82: speech balloon b
+    'qqqqqqqqqqqqqgqqAqoCqg' + //  83: speech balloon rt
+    'AKoAqgCqAKoAqgCqAKoAqg' + //  84: speech balloon r
+    'AKoAKgAKAAIAAACqAKoAqg' + //  85: speech balloon r 2
+    'AqoCqgqqqqqqqqqqqqqqqg' + //  86: speech balloon rb
+    'AAACgAKACCAKoCAIIAgAAA' + //  87: speech A
+    'AAAqgCAgKqAgCCAIKqAAAA' + //  88: speech B
+    'AAAKoCAIIAAgACAICqAAAA' + //  89: speech C
+    'AAAqgCAgIAggCCAgKoAAAA' + //  90: speech D
+    'AAAqqCAAKqAgACAAKqgAAA' + //  91: speech E
+    'AAAqqCAAKqAgACAAIAAAAA' + //  92: speech F
+    'AAAKoCAIIAAgqCAICqAAAA' + //  93: speech G
+    'AAAgCCAIKqggCCAIIAgAAA' + //  94: speech H
+    'AAAKgAIAAgACAAIACoAAAA' + //  95: speech I
+    'AAAAKAAIAAggCCAICqAAAA' + //  96: speech J
+    'AAAgCCAgIoAogCAgIAgAAA' + //  97: speech K
+    'AAAgACAAIAAgACAAKqgAAA' + //  98: speech L
+    'AAAgCCgoIoggCCAIIAgAAA' + //  99: speech M
+    'AAAgCCgIIgggiCAoIAgAAA' + //  100: speech N
+    'AAAKoCAIIAggCCAICqAAAA' + //  101: speech O
+    'AAAqoCAIIAgqoCAAIAAAAA' + //  102: speech P
+    'AAAKgCAgICAiICCgCqgAAA' + //  103: speech Q
+    'AAAqoCAIIAgqoCAgIAgAAA' + //  104: speech R
+    'AAAKqCAACqAACAAIKqAAAA' + //  105: speech S
+    'AAAqoAIAAgACAAIAAgAAAA' + //  106: speech T
+    'AAAgCCAIIAggCCAICqAAAA' + //  107: speech U
+    'AAAgCCAICCAIIAKAAoAAAA' + //  108: speech V
+    'AAAgCCAIIAgiiCgoIAgAAA' + //  109: speech W
+    'AAAgCAggAoACgAggIAgAAA' + //  110: speech X
+    'AAAgIAiAAgACAAIAAgAAAA' + //  111: speech Y
+    'AAAqqAAgAIACAAgAKqgAAA' + //  112: speech Z
+    'AAAAAAAAAAAAAAAAIAAAAA' + //  113: speech .
+    'AAAAAAAAAAAAACAAIAAAAA' + //  114: speech ,
+    'AAACAAIAAgACAAAAAgAAAA' + //  115: speech !
+    'AAAKgCAgACACgAAAAgAAAA' + //  116: speech ?
+    'AAAAAAAAAAAAAAAAAAAAAA' + //  117: speech space
+    'AAAAAAAAAAAKoAAAAAAAAA' + //  118: speech -
+    'AAAIgAiAAAAAAAAAAAAAAA' + //  119: speech "
+    'AAACgAIAAgACAAIAAoAAAA' + //  120: speech [
+    'AAACgACAAIAAgACAAoAAAA' + //  121: speech ]
+    'qqqqqqqqqqqqqqKqiKqKKg' + //  122: badlucky 0
+    'qqqqqqqqqqqqqqqqqqiqog' + //  123: badlucky 1
+    'qqqqqqqqqqqqqiqqiqqKqg' + //  124: badlucky 2
+    'ioKKqIqqiqqVAJQAlCiUKA' + //  125: badlucky 4
+    'qgoAqqqqqqpUARAAEKAQoA' + //  126: badlucky 5
+    'iqqKqolqiWpVVlaVVqlVag' + //  127: badlucky 6
+    'qqqqqqqqqqqWqlaqaqqqqg' + //  128: badlucky 7
+    'lACVAIqqiqqKqoqqiqqKqg' + //  129: badlucky 8
+    'EABUAaqqqqqqqqqqqqqqqg' + //  130: badlucky 9
+    'WVVaVYqqiqiKooqiiqKiog' + //  131: badlucky 10
+    'qqqqqqqqKqqKqoqqiqqKqg' + //  132: badlucky 11
+    'iqqKqqKqqACqqqqqqqqqqg' + //  133: badlucky 12
+    'qqqqqqqqAACqqqqqqqqqqg' + //  134: badlucky 13
+    'qAqqqqqoAAKqqqqqqqqqqg' + //  135: badlucky 14
+    'iqoqqqqqqqqqqqqqqqqqqg' + //  136: badlucky 15
     ''
 )
     .match(/.{22}/g)
@@ -209,7 +285,7 @@ const PLT = [
     '202300', // 10: unicorn 1
     '382000', // 11: star 0
     '383800', // 12: star 1
-    '30381d', // 13: status
+    '30161d', // 13: status 0
     '302500', // 14: heart 0
     '252500', // 15: heart 1
     '302500', // 16: energy 0
@@ -218,7 +294,220 @@ const PLT = [
     '302229', // 19: demo 0
     '302724', // 20: demo 1
     '302427', // 21: demo 2
+    '161d30', // 22: status 1
 ].map((p) => p.match(/.{2}/g));
+
+const sprBadlucky = [
+    [122, 13, 0, 0],
+    [123, 13, 8, 0],
+    [124, 13, 16, 0],
+    [125, 13, 0, 8],
+    [126, 13, 8, 8],
+    [127, 13, 16, 8],
+    [128, 13, 24, 8],
+    [129, 13, 0, 16],
+    [130, 13, 8, 16],
+    [131, 13, 16, 16],
+    [132, 13, 24, 16],
+    [133, 13, 0, 24],
+    [134, 13, 8, 24],
+    [135, 13, 16, 24],
+    [136, 13, 24, 24],
+];
+
+const sprSpeech = [
+    // 0: CLICK ANY RAINBOW
+    [
+        [89, 13, 0, 0],
+        [98, 13, 8, 0],
+        [95, 13, 16, 0],
+        [89, 13, 24, 0],
+        [97, 13, 32, 0],
+        [117, 13, 40, 0],
+        [87, 13, 48, 0],
+        [100, 13, 56, 0],
+        [111, 13, 64, 0],
+        [117, 13, 72, 0],
+        [104, 13, 0, 8],
+        [87, 13, 8, 8],
+        [95, 13, 16, 8],
+        [100, 13, 24, 8],
+        [88, 13, 32, 8],
+        [101, 13, 40, 8],
+        [109, 13, 48, 8],
+        [117, 13, 56, 8],
+        [117, 13, 64, 8],
+        [117, 13, 72, 8],
+    ],
+    // 1: SLIDE TO OPEN SKY
+    [
+        [105, 13, 0, 0],
+        [98, 13, 8, 0],
+        [95, 13, 16, 0],
+        [90, 13, 24, 0],
+        [91, 13, 32, 0],
+        [117, 13, 40, 0],
+        [95, 13, 48, 0],
+        [100, 13, 56, 0],
+        [106, 13, 64, 0],
+        [101, 13, 72, 0],
+        [87, 13, 0, 8],
+        [117, 13, 8, 8],
+        [101, 13, 16, 8],
+        [102, 13, 24, 8],
+        [91, 13, 32, 8],
+        [100, 13, 40, 8],
+        [117, 13, 48, 8],
+        [105, 13, 56, 8],
+        [97, 13, 64, 8],
+        [111, 13, 72, 8],
+    ],
+    // 2: CONNECT "RAIL-BOW"
+    [
+        [89, 13, 0, 0],
+        [101, 13, 8, 0],
+        [100, 13, 16, 0],
+        [100, 13, 24, 0],
+        [91, 13, 32, 0],
+        [89, 13, 40, 0],
+        [106, 13, 48, 0],
+        [117, 13, 56, 0],
+        [117, 13, 64, 0],
+        [117, 13, 72, 0],
+        [119, 13, 0, 8],
+        [104, 13, 8, 8],
+        [87, 13, 16, 8],
+        [95, 13, 24, 8],
+        [98, 13, 32, 8],
+        [118, 13, 40, 8],
+        [88, 13, 48, 8],
+        [101, 13, 56, 8],
+        [109, 13, 64, 8],
+        [119, 13, 72, 8],
+    ],
+    // 3: GIVE STARS TO UNICORN
+    [
+        [93, 13, 0, 0],
+        [95, 13, 8, 0],
+        [108, 13, 16, 0],
+        [91, 13, 24, 0],
+        [117, 13, 32, 0],
+        [105, 13, 40, 0],
+        [106, 13, 48, 0],
+        [87, 13, 56, 0],
+        [104, 13, 64, 0],
+        [105, 13, 72, 0],
+        [107, 13, 0, 8],
+        [100, 13, 8, 8],
+        [95, 13, 16, 8],
+        [89, 13, 24, 8],
+        [101, 13, 32, 8],
+        [104, 13, 40, 8],
+        [100, 13, 48, 8],
+        [117, 13, 56, 8],
+        [117, 13, 64, 8],
+        [117, 13, 72, 8],
+    ],
+    // 4: BE CAREFUL HIS ENERGY
+    [
+        [88, 13, 0, 0],
+        [91, 13, 8, 0],
+        [117, 13, 16, 0],
+        [89, 13, 24, 0],
+        [87, 13, 32, 0],
+        [104, 13, 40, 0],
+        [91, 13, 48, 0],
+        [92, 13, 56, 0],
+        [107, 13, 64, 0],
+        [98, 13, 72, 0],
+        [94, 13, 0, 8],
+        [95, 13, 8, 8],
+        [105, 13, 16, 8],
+        [117, 13, 24, 8],
+        [91, 13, 32, 8],
+        [100, 13, 40, 8],
+        [91, 13, 48, 8],
+        [104, 13, 56, 8],
+        [93, 13, 64, 8],
+        [111, 13, 72, 8],
+    ],
+    // 5: CONGRATS![RESTART]
+    [
+        [89, 13, 0, 0],
+        [101, 13, 8, 0],
+        [100, 13, 16, 0],
+        [93, 13, 24, 0],
+        [104, 13, 32, 0],
+        [87, 13, 40, 0],
+        [106, 13, 48, 0],
+        [105, 13, 56, 0],
+        [115, 13, 64, 0],
+        [117, 13, 72, 0],
+        [117, 22, 0, 8],
+        [104, 22, 8, 8],
+        [91, 22, 16, 8],
+        [105, 22, 24, 8],
+        [106, 22, 32, 8],
+        [87, 22, 40, 8],
+        [104, 22, 48, 8],
+        [106, 22, 56, 8],
+        [117, 22, 64, 8],
+        [117, 13, 72, 8],
+    ],
+    [
+        [117, 13, 0, 0],
+        [117, 13, 8, 0],
+        [117, 13, 16, 0],
+        [117, 13, 24, 0],
+        [117, 13, 32, 0],
+        [117, 13, 40, 0],
+        [117, 13, 48, 0],
+        [117, 13, 56, 0],
+        [117, 13, 64, 0],
+        [117, 13, 72, 0],
+        [117, 13, 0, 8],
+        [117, 13, 8, 8],
+        [117, 13, 16, 8],
+        [117, 13, 24, 8],
+        [117, 13, 32, 8],
+        [117, 13, 40, 8],
+        [117, 13, 48, 8],
+        [117, 13, 56, 8],
+        [117, 13, 64, 8],
+        [117, 13, 72, 8],
+    ],
+];
+
+const sprSpeechBalloon = [
+    [78, 13, 0, 0],
+    [79, 13, 0, 8],
+    [79, 13, 0, 16],
+    [80, 13, 0, 24],
+    [81, 13, 8, 0],
+    [81, 13, 16, 0],
+    [81, 13, 24, 0],
+    [81, 13, 32, 0],
+    [81, 13, 40, 0],
+    [81, 13, 48, 0],
+    [81, 13, 56, 0],
+    [81, 13, 64, 0],
+    [81, 13, 72, 0],
+    [81, 13, 80, 0],
+    [82, 13, 8, 24],
+    [82, 13, 16, 24],
+    [82, 13, 24, 24],
+    [82, 13, 32, 24],
+    [82, 13, 40, 24],
+    [82, 13, 48, 24],
+    [82, 13, 56, 24],
+    [82, 13, 64, 24],
+    [82, 13, 72, 24],
+    [82, 13, 80, 24],
+    [83, 13, 88, 0],
+    [84, 13, 88, 8],
+    [85, 13, 88, 16],
+    [86, 13, 88, 24],
+];
 
 const sprDemo = [
     [72, 19, 0, 0],
@@ -900,7 +1189,8 @@ const unicornReset = () => {
     unicorn.direction = 'N';
     unicorn.lr = 'R';
     unicorn.face = '';
-    unicorn.energy = 100;
+    // unicorn.energy = 100;
+    unicorn.energy = 10;
 };
 unicornReset();
 
@@ -912,12 +1202,14 @@ function getItem() {
             if (item[targetPid] == 2) unicorn.energy = 100;
             item[targetPid] = undefined;
             unicorn.face = 'happy';
+            seStar();
         }
     } else {
         if (unicorn.x == 32) {
             if (item[targetPid] == 2) unicorn.energy = 100;
             item[targetPid] = undefined;
             unicorn.face = 'happy';
+            seStar();
         }
     }
 }
@@ -1090,6 +1382,17 @@ let demoCoord = [
     [2, 1],
     [2, 2],
     [1, 2],
+    [2, 1],
+    [3, 1],
+    [2, 1],
+    [2, 2],
+    [2, 1],
+    [0, 1],
+    [0, 2],
+    [0, 2],
+    [1, 2],
+    [1, 3],
+    [2, 3],
 ];
 let panelMoveFlg = 0;
 let demoStep = 0;
@@ -1100,7 +1403,10 @@ const main = (timestamp) => {
     if (timestamp - lastTime > 32) {
         lastTime = timestamp;
 
-        unicornMove();
+        const remainingStars = item.filter((i) => i == 1).length;
+        const gettingStars = 13 - remainingStars;
+
+        if (remainingStars != 0) unicornMove();
         getItem();
 
         // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
@@ -1134,10 +1440,6 @@ const main = (timestamp) => {
             }
         });
 
-        const remainingStars = item.filter((i) => i == 1).length;
-        const gettingStars = 13 - remainingStars;
-        document.querySelector('#debug').innerHTML = mode;
-
         // status
         sprStar1.forEach((s) => SPR.push([s[0], s[1], s[2] - 16, s[3] + 184, s[4]]));
         const gettingStarsString = String(gettingStars).padStart(2, '0');
@@ -1158,6 +1460,24 @@ const main = (timestamp) => {
         sprEnergy[Math.ceil(unicorn.energy / 10)].forEach((s) =>
             SPR.push([s[0], s[1], s[2], s[3], s[4], s[5]]),
         );
+
+        sprSpeechBalloon.forEach((s) => SPR.push([s[0], s[1], s[2] + 128, s[3] + 192, s[4], s[5]]));
+        let msgId = 0;
+        if (remainingStars == 0) {
+            msgId = 5;
+        } else if (counter % 120 < 20) {
+            msgId = 0;
+        } else if (counter % 120 < 40) {
+            msgId = 1;
+        } else if (counter % 120 < 60) {
+            msgId = 2;
+        } else if (counter % 120 < 80) {
+            msgId = 3;
+        } else if (counter % 120 < 100) {
+            msgId = 4;
+        }
+        sprSpeech[msgId].forEach((s) => SPR.push([s[0], s[1], s[2] + 136, s[3] + 200, s[4], s[5]]));
+        sprBadlucky.forEach((s) => SPR.push([s[0], s[1], s[2] + 224, s[3] + 192, s[4], s[5]]));
 
         oscSp1Ctx.fillStyle = lch(bgColor);
         oscSp1Ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -1212,18 +1532,35 @@ const main = (timestamp) => {
         // stage clear
         if (remainingStars == 0) {
             console.log('finish');
-            return;
+            bgmStop(playID);
+            // return;
         }
 
         // game over
         if (unicorn.energy == 0) {
             console.log('game over');
-            return;
+            bgmStop(playID);
+            // return;
         }
     }
     requestAnimationFrame(main);
 };
 main();
+
+const reset = () => {
+    unicornReset(); //1185
+    shuffle(PANEL_MAP); //1020
+    panelReset(); //755
+    panelTerminalReset(); //995
+    REMOVAL_MAP_ID = 15; //1036
+    removalPid = PANEL_MAP[REMOVAL_MAP_ID]; //1037
+    PANEL[removalPid] = []; //753
+    PANEL_TERMINAL[removalPid] = []; //994
+    BG0 = setBg(); //1119
+    drawBG(); //1175
+    itemReset(); //1125
+    bgmMain(); //65
+};
 
 CANVAS.onclick = (e) => {
     const rect = e.target.getBoundingClientRect();
@@ -1233,26 +1570,20 @@ CANVAS.onclick = (e) => {
     const blockH = 48 * SCALE;
     const clickCol = Math.floor(clickX / blockW);
     const clickRow = Math.floor(clickY / blockH);
+    // demo
     if (mode == 0) {
+        // start
         if (clickRow > 3) {
-            mode = 1;
-            unicornReset();
-            shuffle(PANEL_MAP);
-            panelReset();
-            panelTerminalReset();
-            REMOVAL_MAP_ID = 15;
-            removalPid = PANEL_MAP[REMOVAL_MAP_ID];
-            PANEL[removalPid] = [];
-            PANEL_TERMINAL[removalPid] = [];
-            BG0 = setBg();
-            drawBG();
-            itemReset();
-            // console.log('removalPid', removalPid);
+            mode = 1; //12
+            reset();
         }
     } else if (mode == 1) {
-        panelMove(clickCol, clickRow);
+        if (item.filter((i) => i == 1).length > 0 && unicorn.energy > 0) {
+            panelMove(clickCol, clickRow);
+        } else if (clickRow > 3) {
+            reset();
+        }
     }
-    // console.log(PANEL_MAP);
 };
 
 function adjustContainer() {
