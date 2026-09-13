@@ -264,18 +264,18 @@ const bgmMain = () => {
     playID = loop(synthesizers, playbackData, kms);
 };
 
-document.querySelector('#play').onclick = () => {
-    bgmMain();
-};
+// document.querySelector('#play').onclick = () => {
+//     bgmMain();
+// };
 
 const bgmStop = (playID) => {
     clearInterval(playID);
     stop(synthesizers);
 };
 
-document.querySelector('#stop').onclick = () => {
-    bgmStop(playID);
-};
+// document.querySelector('#stop').onclick = () => {
+//     bgmStop(playID);
+// };
 
 const seStar = () => {
     // let rtn = synthesizers[0].play(83, { vol: 0.1, dur: 0.1 });
@@ -285,23 +285,9 @@ const seStar = () => {
     synthesizers[0].play(96, { vol: 0.1, sta: rtn.end, dur: 0.2, env: [0, 0, 1, 0.2] });
 };
 
-const seWin = () => {
-    let rtn = synthesizers[0].play(60, { vol: 0.1, dur: 0.05 });
-    rtn = synthesizers[0].play(64, { vol: 0.1, sta: rtn.end, dur: 0.05 });
-    rtn = synthesizers[0].play(67, { vol: 0.1, sta: rtn.end, dur: 0.05 });
-    rtn = synthesizers[0].play(71, { vol: 0.1, sta: rtn.end, dur: 0.05 });
-    synthesizers[0].play(72, { vol: 0.1, sta: rtn.end, dur: 1 });
-
-    let rtn2 = synthesizers[1].play(64, { vol: 0.1, dur: 0.05 });
-    rtn2 = synthesizers[1].play(67, { vol: 0.1, sta: rtn2.end, dur: 0.05 });
-    rtn2 = synthesizers[1].play(71, { vol: 0.1, sta: rtn2.end, dur: 0.05 });
-    rtn2 = synthesizers[1].play(74, { vol: 0.1, sta: rtn2.end, dur: 0.05 });
-    synthesizers[1].play(76, { vol: 0.1, sta: rtn2.end, dur: 1 });
-};
-
-document.querySelector('#star').onclick = () => {
-    seWin();
-};
+// document.querySelector('#star').onclick = () => {
+//     seWin();
+// };
 
 // document.getElementById('resume').onclick = async () => {
 //     if (audioCtx.state === 'suspended') {
