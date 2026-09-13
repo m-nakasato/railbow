@@ -1,82 +1,3 @@
-/**
- * @param {number} noteNumber
- * @param {Object} options
- * @param {number} [options.mod]
- * @param {number} [options.sta]
- * @param {number} [options.dur]
- * @param {number} [options.vol]
- * @param {number} [options.det]
- * @param {number} [options.swp]
- * @param {number[]} [options.env]
- * @param {number[]} [options.vib]
- * @param {number[]} [options.trm]
- * @param {Array} waves
- */
-function validatePlayArgs(noteNumber, options, waves) {
-    if (Number.isNaN(noteNumber) || noteNumber < 0 || noteNumber > 127)
-        throw new Error('Invalid note number ( ' + noteNumber + ' )');
-
-    if (Object.keys(options).length === 0) return;
-
-    if (options.mod != undefined) {
-        if (
-            Number.isInteger(options.mod) == false ||
-            options.mod < 0 ||
-            options.mod >= waves.length
-        )
-            throw new Error('Invalid mode ( ' + options.mod + ' )');
-    }
-
-    if (Number.isNaN(options.sta) || options.sta < 0)
-        throw new Error('Invalid start time ( ' + options.sta + ' )');
-    if (Number.isNaN(options.dur) || options.dur <= 0)
-        throw new Error('Invalid duration ( ' + options.dur + ' )');
-    if (Number.isNaN(options.vol) || options.vol < 0 || options.vol > 2)
-        throw new Error('Invalid volume ( ' + options.vol + ' )');
-    if (Number.isNaN(options.det) || options.det < -100 || options.det > 100)
-        throw new Error('Invalid detune ( ' + options.det + ' )');
-    if (Number.isNaN(options.swp) || options.swp < -3600 || options.swp > 3600)
-        throw new Error('Invalid sweep ( ' + options.swp + ' )');
-    if (options.env != undefined) {
-        if (Array.isArray(options.env) == false || options.env.length > 4)
-            throw new Error('Invalid envelope');
-        if (options.env[0] + options.env[1] + options.env[3] > options.dur)
-            throw new Error(
-                'Invalid envelope (' +
-                    options.env[0] +
-                    ' + ' +
-                    options.env[1] +
-                    ' + ' +
-                    options.env[3] +
-                    ' > ' +
-                    options.dur +
-                    ')',
-            );
-        if (options.env[2] < 0 || options.env[2] > 1)
-            throw new Error('Invalid envelope sustain level');
-        options.env.forEach(value => {
-            if (Number.isNaN(value) || value < 0) throw new Error('Invalid envelope value');
-        });
-    }
-    if (options.vib != undefined) {
-        if (Array.isArray(options.vib) == false || options.vib.length > 3)
-            throw new Error('Invalid vibrato');
-        let [depth, rate, wave] = options.vib;
-        if (Number.isNaN(depth) || depth < 0 || depth > 100)
-            throw new Error('Invalid vibrato depth');
-        if (Number.isNaN(rate) || rate <= 0 || rate > 10) throw new Error('Invalid vibrato rate');
-        if (typeof wave != 'string') throw new Error('Invalid vibrato wave');
-    }
-    if (options.trm != undefined) {
-        if (Array.isArray(options.trm) == false || options.trm.length > 3)
-            throw new Error('Invalid tremolo');
-        let [depth, rate, wave] = options.trm;
-        if (Number.isNaN(depth) || depth < 0 || depth > 1) throw new Error('Invalid tremolo depth');
-        if (Number.isNaN(rate) || rate <= 0 || rate > 10) throw new Error('Invalid tremolo rate');
-        if (typeof wave != 'string') throw new Error('Invalid tremolo wave');
-    }
-}
-
 class Synthesizer {
     #audioCtx;
     #waves;
@@ -98,7 +19,6 @@ class Synthesizer {
         gain.linearRampToValueAtTime(0, endTime);
     }
     play(noteNumber, options = {}) {
-        validatePlayArgs(noteNumber, options, this.#waves);
 
         const {
             'mod': mode = 0,
@@ -159,14 +79,6 @@ class Wave {
 }
 
 function num2freq(noteNumber) {
-    {
-        if (typeof noteNumber !== 'number') {
-            throw new TypeError(`Input must be a number: ${noteNumber}`);
-        }
-        if (noteNumber < 0 || noteNumber > 127) {
-            throw new RangeError(`MIDI note number must be between 0 and 127: ${noteNumber}`);
-        }
-    }
     return 55 * 2 ** ((noteNumber - 33) / 12);
 }
 
@@ -294,29 +206,32 @@ let mode = 0;
 
 const kms = {
     bpm: 100,
-    value: '16',
+    value: '8t',
     time: '4/4',
-    loop: 1,
+    loop: 0,
     track: [
-        '76 + _ 76 _ 72 76 _ 79 _,8. 67 _,8.|72 _,8 67 _,8 64 _ _ 69 _ 71 _ 70 69 _|67,8t,1 76,8t,1 79,8t,1 81 _ 77 79 _ 76 _ 72 74 71 _,8|_,8 79 78 77 75 _ 76 _ 68 69 72 _ 69 72 74|_,8 79 78 77 75 _ 76 _ 84 _ 84 84 _,8.|_,8 79 78 77 75 _ 76 _ 68 69 72 _ 69 72 74|_,8 75 _,8 74 _,8 72 _,8. _,4|72 + _ 72 _ 72 74 _ 76 72 _ 69 67 _,8.|72 + _ 72 _ 72 74 76 _,2|76 72 _ 67 _,8 68 _ 69 77 _ 77 69 _,8.|71,8t,1 81,8t,1 + 81,8t,1 79,8t,1 77,8t,1 76 72 _ 69 67 _,8.|71 77 _ 77 77,8t,1 76,8t,1 74,8t,1 72 _,8. _,4',
-        '66 + _ 66 _ 66 + _ 71 _,8. _,4|64 _,8 60 _,8 55 _ _ 60 _ 62 _ 61 60 _|60,8t,1 67,8t,1 71,8t,1 72 _ 69 71 _ 69 _ 64 65 62 _,8|_,8 76 75 74 71 _ 72 _ 64 65 67 _ 60 64 65|_,8 76 75 74 71 _ 72 _ 77 _ 77 77 _,8.|_,8 76 75 74 71 _ 72 _ 64 65 67 _ 60 64 65|_,8 68 _,8 65 _,8 64 _,8. _,4|68 + _ 68 _ 68 70 _ 67 64 _ 64 60 _,8.|68 + _ 68 _ 68 70 67 _,2|72 69 _ 64 _,8 64 _ 65 72 _ 72 65 _,8.|67,8t,1 77,8t,1 + 77,8t,1 76,8t,1 74,8t,1 72 69 _ 65 64 _,8.|67 74 _ 74 74,8t,1 72,8t,1 71,8t,1 67 64 _ 64 60 _,8.',
-        '50 + _ 50 _ 50 + _ 67 _,8. 55 _,8.|55 _,8 52 _,8 48 _ _ 53 _ 55 _ 54 53 _|52,8t 60,8t 64,8t 65 _ 62 64 _ 60 _ 57 59 55 _,8|48 _,8 55 _,8 60 _ 53 _,8 60 60 + 53 _|48 _,8 52 _,8 55 60 _ 79 _ 79 79 _ 55 _|48 _,8 55 _,8 60 _ 53 _,8 60 60 + 53 _|48 _ 56 _,8 58 _,8 60 _,8 55 55 _ 48 _|44 _,8 51 _,8 56 _ 55 _,8 48 _,8 43 _|%|48 _,8 54 55 _ 60 _ 53 _ 53 _ 60 + 53 _|50 _,8 53 55 _ 59 _ 55 _ 55 _ 60 + 55 _|55 _,8 55 55,8t 57,8t 59,8t 60 _ 55 _ 48 _,8.',
-        '11 _ 11,16,1 11 _ 11,16,1 11 _ 11 _,8 11 _ 11,16,1 + +|2,16,3 _ 11,16,1 11,16,2 11 _ 11,16,1 11,16,2 2,16,3 _ 11,16,1 11,16,2 11 _ 11,16,1 11,16,2|%|%2|%2|11 _,8 11 _,8 11 _ 11 _,8 11 _ 11,16,1 + +|%|11,16,1 _,8 11,16,1 11 _ 11,16,1 _ 11,16,1 _,8 11,16,1 11 _ 11,16,1 _|%|%',
+        '_|_|_|_',
+        // '36,8 _ 43,8 _ 36,8 _ 43,8 _|_|_|_',
+        // '60 _ 62 64 _ 65 67 _ 69 71 _ 72|71 _ 69 67 _ 65 64 _ 65 67 _ _|60 _ 62 64 _ 65 67 _ 69 71 _ 72|71 _ 69 67 _ 65 64 _ 62 60 _ _',
+        // '_ _ 65 _ _ 69 _ _ 72 _ _ 76|_ _ 72 _ _ 69 _ _ 69 _ _|_|_',
+        // '57 _ 59 60 _ 62 64 _ 65 _ _ _|_|_|_',
+        '48,8 _,8 43,8 _,8 48,8 _,8 43,8 _,8|48,8 _,8 43,8 _,8 48,8 _,8 43,8 _,8|48,8 _,8 43,8 _,8 48,8 _,8 43,8 _,8|48,8 _,8 43,8 _,8 48,8 _,8 43,8 _,8',
+        // '48,4 48,4 52,4 55,4|55,4 52,4 50,4 52,4|48,4 52,4 55,4 57,4|55,4 52,4 50,4 48,4',
+        '60 _ 62 64 _ 65 67 _ 69 71 _ 72|71 _ 69 67 _ 65 64 _ 65 67 _ _|60 _ 62 64 _ 65 67 _ 69 71 _ 72|71 _ 69 67 _ 65 64 _ 62 60 _ _',
+        '_|_|_|_',
     ],
-    seq: [
-        0, 1, 2, 1, 2, 3, 4, 5, 6, 3, 4, 5, 6, 7, 8, 7, 0, 1, 2, 1, 2, 9, 10, 9, 11, 9, 10, 9, 11,
-        7, 8, 7, 0, 9, 10, 9, 11,
-    ],
+    seq: [0, 1, 2, 3],
     opt: [
         [
             { env: [0.01, 0.09, 0.75, 0.05], vol: 0.1 },
             { env: [0.01, 0, 1, 0.18], vol: 0.1 }, // triplet
         ],
-        [
-            { env: [0.01, 0.09, 0.75, 0.05], vol: 0.1 },
-            { env: [0.01, 0, 1, 0.18], vol: 0.1 }, // triplet
-        ],
-        [{ env: [0.01, 0.09, 1, 0.05], vol: 0.1 }],
+        [{ env: [0.01, 0.09, 1, 0.3], vol: 0.2 }],
+        // [
+        //     { env: [0.01, 0.09, 0.75, 0.05], vol: 0.1 },
+        //     { env: [0.01, 0, 1, 0.18], vol: 0.1 }, // triplet
+        // ],
+        [{ env: [0.01, 0.09, 1, 0.3], vol: 0.2 }],
         [
             { env: [0, 0.09, 0, 0.05], vol: 0.1 },
             { env: [0.01, 0.01, 0, 0], vol: 0.1 }, // closed hi-hat
@@ -336,7 +251,7 @@ let periods = [
 
 const synthesizers = [
     new Synthesizer(audioCtx, [new Wave(audioCtx, presetWaveStrategy, 'square')]),
-    new Synthesizer(audioCtx, [new Wave(audioCtx, presetWaveStrategy, 'square')]),
+    new Synthesizer(audioCtx, [new Wave(audioCtx, presetWaveStrategy, 'triangle')]),
     new Synthesizer(audioCtx, [new Wave(audioCtx, presetWaveStrategy, 'triangle')]),
     new Synthesizer(audioCtx, [new Wave(audioCtx, noiseWaveStrategy, periods)]),
 ];
@@ -363,12 +278,29 @@ document.querySelector('#stop').onclick = () => {
 };
 
 const seStar = () => {
-    let rtn = synthesizers[0].play(83, { vol: 0.1, dur: 0.1 });
-    synthesizers[0].play(88, { vol: 0.1, sta: rtn.end, dur: 1, env: [0, 0, 1, 1] });
+    // let rtn = synthesizers[0].play(83, { vol: 0.1, dur: 0.1 });
+    // synthesizers[0].play(88, { vol: 0.1, sta: rtn.end, dur: 1, env: [0, 0, 1, 1] });
+    let rtn = synthesizers[0].play(79, { vol: 0.1, dur: 0.05 });
+    rtn = synthesizers[0].play(88, { vol: 0.1, sta: rtn.end, dur: 0.05 });
+    synthesizers[0].play(96, { vol: 0.1, sta: rtn.end, dur: 0.2, env: [0, 0, 1, 0.2] });
+};
+
+const seWin = () => {
+    let rtn = synthesizers[0].play(60, { vol: 0.1, dur: 0.05 });
+    rtn = synthesizers[0].play(64, { vol: 0.1, sta: rtn.end, dur: 0.05 });
+    rtn = synthesizers[0].play(67, { vol: 0.1, sta: rtn.end, dur: 0.05 });
+    rtn = synthesizers[0].play(71, { vol: 0.1, sta: rtn.end, dur: 0.05 });
+    synthesizers[0].play(72, { vol: 0.1, sta: rtn.end, dur: 1 });
+
+    let rtn2 = synthesizers[1].play(64, { vol: 0.1, dur: 0.05 });
+    rtn2 = synthesizers[1].play(67, { vol: 0.1, sta: rtn2.end, dur: 0.05 });
+    rtn2 = synthesizers[1].play(71, { vol: 0.1, sta: rtn2.end, dur: 0.05 });
+    rtn2 = synthesizers[1].play(74, { vol: 0.1, sta: rtn2.end, dur: 0.05 });
+    synthesizers[1].play(76, { vol: 0.1, sta: rtn2.end, dur: 1 });
 };
 
 document.querySelector('#star').onclick = () => {
-    seStar();
+    seWin();
 };
 
 // document.getElementById('resume').onclick = async () => {
@@ -724,6 +656,29 @@ const sprSpeech = [
         [105, 13, 56, 0],
         [115, 13, 64, 0],
         [117, 13, 72, 0],
+        [117, 22, 0, 8],
+        [104, 22, 8, 8],
+        [91, 22, 16, 8],
+        [105, 22, 24, 8],
+        [106, 22, 32, 8],
+        [87, 22, 40, 8],
+        [104, 22, 48, 8],
+        [106, 22, 56, 8],
+        [117, 22, 64, 8],
+        [117, 13, 72, 8],
+    ],
+    //6: GAME OVER![RESTART]
+    [
+        [93, 13, 0, 0],
+        [87, 13, 8, 0],
+        [99, 13, 16, 0],
+        [91, 13, 24, 0],
+        [117, 13, 32, 0],
+        [101, 13, 40, 0],
+        [108, 13, 48, 0],
+        [91, 13, 56, 0],
+        [104, 13, 64, 0],
+        [115, 13, 72, 0],
         [117, 22, 0, 8],
         [104, 22, 8, 8],
         [91, 22, 16, 8],
@@ -1306,13 +1261,14 @@ function shuffle(array) {
     if (array[15] > 7) shuffle(array);
 }
 
-if (mode == 0) {
-    PANEL_MAP = [4, 11, 8, 2, 7, 12, 13, 10, 9, 6, 3, 1, 14, 5, 15, 0];
-    // shuffle(PANEL_MAP);
-} else if (mode == 1) {
-    shuffle(PANEL_MAP);
-}
-console.log(JSON.stringify(PANEL_MAP));
+const resetPanel = () => {
+    if (mode == 0) {
+        PANEL_MAP = [4, 11, 8, 2, 7, 12, 13, 10, 9, 6, 3, 1, 14, 5, 15, 0];
+    } else if (mode == 1) {
+        shuffle(PANEL_MAP);
+    }
+};
+resetPanel();
 
 let REMOVAL_MAP_ID = 15;
 let removalPid = PANEL_MAP[REMOVAL_MAP_ID];
@@ -1470,8 +1426,8 @@ const unicornReset = () => {
     unicorn.direction = 'N';
     unicorn.lr = 'R';
     unicorn.face = '';
-    // unicorn.energy = 100;
-    unicorn.energy = 10;
+    unicorn.energy = 100;
+    // unicorn.energy = 10;
 };
 unicornReset();
 
@@ -1484,6 +1440,11 @@ function getItem() {
             item[targetPid] = undefined;
             unicorn.face = 'happy';
             seStar();
+            // if (item.filter((i) => i == 1).length == 0) {
+            //     seWin();
+            // } else {
+            //     seStar();
+            // }
         }
     } else {
         if (unicorn.x == 32) {
@@ -1491,6 +1452,13 @@ function getItem() {
             item[targetPid] = undefined;
             unicorn.face = 'happy';
             seStar();
+            // if (item.filter((i) => i == 1).length == 0) seWin();
+            // seStar();
+            // if (item.filter((i) => i == 1).length == 0) {
+            //     seWin();
+            // } else {
+            //     seStar();
+            // }
         }
     }
 }
@@ -1638,7 +1606,6 @@ const panelMove = (clickCol, clickRow) => {
         }
     }
     PANEL_MAP[REMOVAL_MAP_ID] = removalPid;
-    // console.log('clickMapId: ' + clickMapId, 'removalMapId: ' + removalMapId);
     BG0 = setBg();
 
     drawBG();
@@ -1679,19 +1646,18 @@ let panelMoveFlg = 0;
 let demoStep = 0;
 const main = (timestamp) => {
     const counter = Math.floor(timestamp / 250);
-    // document.querySelector('#debug').innerHTML = counter + ': ' + (counter % 2);
+    const remainingStars = item.filter((i) => i == 1).length;
 
-    if (timestamp - lastTime > 32) {
+    // if (timestamp - lastTime > 32) {
+    if (timestamp - lastTime > 32 && remainingStars != 0 && unicorn.energy != 0) {
+        const gettingStars = 13 - remainingStars;
         lastTime = timestamp;
 
-        const remainingStars = item.filter((i) => i == 1).length;
-        const gettingStars = 13 - remainingStars;
-
-        if (remainingStars != 0) unicornMove();
+        // if (remainingStars != 0 && unicorn.energy != 0) unicornMove();
+        unicornMove();
         getItem();
 
         // [0:chrId, 1:pltId, 2:x, 3:y, 4:flipH, 5:flipV, 6:priority]
-        // let SPR = counter % 4 == 0 ? [...sprStar0] : [...sprStar1];
         const SPR = [];
 
         item.forEach((i, pid) => {
@@ -1744,7 +1710,9 @@ const main = (timestamp) => {
 
         sprSpeechBalloon.forEach((s) => SPR.push([s[0], s[1], s[2] + 128, s[3] + 192, s[4], s[5]]));
         let msgId = 0;
-        if (remainingStars == 0) {
+        if (unicorn.energy == 0) {
+            msgId = 6;
+        } else if (item.filter((i) => i == 1).length == 0) {
             msgId = 5;
         } else if (counter % 120 < 20) {
             msgId = 0;
@@ -1782,13 +1750,22 @@ const main = (timestamp) => {
         // demo
         if (mode == 0) {
             if (timestamp - demoLastTime > 1000) {
+                if (demoCoord.length <= demoStep) {
+                    demoStep = 0;
+                    panelMoveFlg = 0;
+                    // demoLastTime = 0;
+                    demoXos = 128;
+                    demoYos = 96;
+                    reset();
+                }
                 demoLastTime = timestamp;
                 demoXos = demoCoord[demoStep][0] * 64 + 32;
                 demoYos = demoCoord[demoStep][1] * 48 + 24;
                 if (panelMoveFlg) {
                     panelMove(demoCoord[demoStep][0], demoCoord[demoStep][1]);
                     panelMoveFlg ^= 1;
-                    if (demoCoord.length - 1 > demoStep) demoStep++;
+                    // if (demoCoord.length - 1 > demoStep) demoStep++;
+                    demoStep++;
                 } else {
                     panelMoveFlg ^= 1;
                 }
@@ -1811,15 +1788,15 @@ const main = (timestamp) => {
         canvasRenderingCtx.drawImage(oscSp0, 0, 0);
 
         // stage clear
-        if (remainingStars == 0) {
-            console.log('finish');
+        if (item.filter((i) => i == 1).length == 0) {
+            // console.log('finish');
             bgmStop(playID);
             // return;
         }
 
         // game over
         if (unicorn.energy == 0) {
-            console.log('game over');
+            // console.log('game over');
             bgmStop(playID);
             // return;
         }
@@ -1830,7 +1807,8 @@ main();
 
 const reset = () => {
     unicornReset(); //1185
-    shuffle(PANEL_MAP); //1020
+    // shuffle(PANEL_MAP); //1020
+    resetPanel();
     panelReset(); //755
     panelTerminalReset(); //995
     REMOVAL_MAP_ID = 15; //1036
@@ -1840,7 +1818,6 @@ const reset = () => {
     BG0 = setBg(); //1119
     drawBG(); //1175
     itemReset(); //1125
-    bgmMain(); //65
 };
 
 CANVAS.onclick = (e) => {
@@ -1854,15 +1831,17 @@ CANVAS.onclick = (e) => {
     // demo
     if (mode == 0) {
         // start
-        if (clickRow > 3) {
-            mode = 1; //12
-            reset();
-        }
+        // if (clickRow > 3) {
+        mode = 1; //12
+        reset();
+        bgmMain(); //65
+        // }
     } else if (mode == 1) {
         if (item.filter((i) => i == 1).length > 0 && unicorn.energy > 0) {
             panelMove(clickCol, clickRow);
         } else if (clickRow > 3) {
             reset();
+            bgmMain(); //65
         }
     }
 };
